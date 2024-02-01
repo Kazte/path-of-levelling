@@ -14,7 +14,7 @@
 
 ## Introduction
 
-This a aplication to help leveling in Path of Exile game. You can crear and upload builds from **[Exile Leveling](https://heartofphos.github.io/exile-leveling/)** page. Also you can see the steps inside the game. It will be automatically updated (when change the zone).
+This a aplication to help leveling in Path of Exile game. You can create and upload builds from **[Exile Leveling](https://heartofphos.github.io/exile-leveling/)** page. Also you can see the steps inside the game. It will be automatically updated (when change the zone).
 
 ## Features
 
