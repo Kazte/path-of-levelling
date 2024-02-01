@@ -1,8 +1,4 @@
-<h1 align=center style='display: flex; flex-flow: row; justify-content: center; align-items: center;'>
-  <img src='https://static.wikia.nocookie.net/pathofexile_gamepedia/images/1/12/Path_of_Exile_logo.png/revision/latest?cb=20141226231222' align='center' height='60'/>
-  <p align='center'>Poe Guides</p>
-  <img src='https://static.wikia.nocookie.net/pathofexile_gamepedia/images/1/12/Path_of_Exile_logo.png/revision/latest?cb=20141226231222' align='center' height='60'/>
-</h1>
+<h1 align='center'>Poe Guides</h1>
 
 ## Table of Contents
 
