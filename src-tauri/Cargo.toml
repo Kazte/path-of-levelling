@@ -1,0 +1,25 @@
+[package]
+name = "poe-tauri"
+version = "0.0.0"
+description = "A Tauri App"
+authors = ["you"]
+license = ""
+repository = ""
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build-dependencies]
+tauri-build = { version = "1.5", features = [] }
+
+[dependencies]
+tokio = { version = "1.0", features = ["full"] }
+tauri = { version = "1.5", features = [ "window-start-dragging", "window-close", "window-set-size", "window-set-always-on-top", "window-minimize", "window-set-position", "window-set-ignore-cursor-events", "global-shortcut-all", "clipboard-read-text", "fs-read-file", "fs-exists", "shell-open"] }
+serde = { version = "1.0", features = ["derive"] }
+async-fs = "2.1.0"
+serde_json = "1.0"
+
+[features]
+# this feature is used for production builds or when `devPath` points to the filesystem
+# DO NOT REMOVE!!
+custom-protocol = ["tauri/custom-protocol"]
