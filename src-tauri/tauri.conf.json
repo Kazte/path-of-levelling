@@ -60,7 +60,7 @@
       {
         "title": "PoE Guides",
         "fullscreen": false,
-        "resizable": true,
+        "resizable": false,
         "width": 800,
         "height": 600,
         "decorations": false,
