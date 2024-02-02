@@ -26,6 +26,7 @@ import { clearGuide, setNewGuide } from '@/utilities/guide.utilities';
 import { getLocalStorage } from '@/utilities/save-localstorage';
 import { cn } from '@/lib/utils';
 import { AppScanningState, AppState, useAppStore } from '@/store/app.store';
+import logo from '@/assets/icon.ico';
 
 export default function Navbar() {
   const { setAppState, appScanningState, setAppScanningState } = useAppStore(
@@ -78,12 +79,17 @@ export default function Navbar() {
 
   return (
     <Menubar
-      className='rounded-none border-b border-divider px-2 lg:px-4 justify-between h-[35px]'
+      className='rounded-none border-b px-2 lg:px-4 justify-between h-[35px]'
       data-tauri-drag-region
     >
-      <div className='flex flex-row gap-4'>
+      <div className='flex flex-row gap-4 justify-center items-center'>
         <MenubarMenu>
-          <MenubarTrigger className='text-sm h-1/2 hover:bg-accent transition-opacity data-[state=open]:bg-transparent data-[highlighted]:bg-transparent'>
+          <MenubarTrigger className='text-sm h-1/2 hover:bg-accent transition-opacity data-[state=open]:bg-transparent data-[highlighted]:bg-transparent gap-1'>
+            <img
+              src={logo}
+              className='select-none w-5 h-5'
+              data-tauri-drag-region
+            />
             PoE Guides
           </MenubarTrigger>
 
