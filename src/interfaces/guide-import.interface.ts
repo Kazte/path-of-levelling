@@ -16,3 +16,19 @@ export interface ISubStepImport {
   parts: any[];
   subSteps: any[];
 }
+
+export interface IGuideType {
+  type: string;
+  name: string;
+}
+
+export const guideTypes: IGuideType[] = [
+  {
+    type: 'enter',
+    name: 'Enter'
+  },
+  {
+    type: 'kill',
+    name: 'Kill'
+  }
+];

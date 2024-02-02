@@ -57,11 +57,6 @@ function App() {
   };
 
   useEffect(() => {
-    if (!guide) return;
-    // sanitizeGuide(guide!);
-  }, [guide]);
-
-  useEffect(() => {
     if (appState === AppState.TEST) {
       // Save last position of the window
       appWindow.innerPosition().then(({ x, y }) => {
@@ -173,22 +168,19 @@ function App() {
         </section>
       </Switch.Case>
       <Switch.Default>
-        <>
-          <Navbar />
-          <main className='flex-grow p-2'>
-            {areaName && <h2>{areaName}</h2>}
-            <Switch>
-              <Switch.Case condition={!!guide}>
-                <LevellingGuide levellingGuide={guide} />
-              </Switch.Case>
-              <Switch.Default>
-                <div className='flex-grow p-2'>
-                  <h2>No guide selected</h2>
-                </div>
-              </Switch.Default>
-            </Switch>
-          </main>
-        </>
+        <Navbar />
+        <main className='flex-grow p-2 overflow-y-auto'>
+          <Switch>
+            <Switch.Case condition={!!guide}>
+              <LevellingGuide levellingGuide={guide} />
+            </Switch.Case>
+            <Switch.Default>
+              <div className='flex-grow p-2'>
+                <h2>No guide selected</h2>
+              </div>
+            </Switch.Default>
+          </Switch>
+        </main>
       </Switch.Default>
     </Switch>
   );

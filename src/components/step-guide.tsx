@@ -1,11 +1,13 @@
-import { IStepImport } from '../interfaces/guide-import.interface';
+import { IStep } from '../interfaces/guide.interface';
 
-export default function StepGuide({ step }: { step: IStepImport }) {
+export default function StepGuide({ step }: { step: IStep }) {
   return (
     <div>
-      <h4>{step.type}</h4>
-      <p>{JSON.stringify(step.parts)}</p>
-      <p>{JSON.stringify(step.subSteps)}</p>
+      {step.subSteps.map((subStep, index) => (
+        <div key={index}>
+          <p>{subStep.description}</p>
+        </div>
+      ))}
     </div>
   );
 }

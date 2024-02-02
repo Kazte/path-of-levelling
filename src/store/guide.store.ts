@@ -1,12 +1,12 @@
-import { IGuideImport } from '@/interfaces/guide-import.interface';
+import { IGuide } from '@/interfaces/guide.interface';
 import { create } from 'zustand';
 
 interface States {
-  guide: IGuideImport | null;
+  guide: IGuide | null;
 }
 
 interface Actions {
-  setGuide: (guide: IGuideImport) => void;
+  setGuide: (guide: IGuide) => void;
 }
 
 export const useGuideStore = create<States & Actions>((set) => ({
