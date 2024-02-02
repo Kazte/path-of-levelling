@@ -4,17 +4,19 @@ import { invoke } from '@tauri-apps/api';
 import { IGuide } from './interfaces/guide.interface';
 import { readText } from '@tauri-apps/api/clipboard';
 import LevellingGuide from './components/levelling-guide';
-import { getGuide, removeGuide, saveGuide } from './utils/save-guide';
+import { getGuide, removeGuide, saveGuide } from './utilities/save-guide';
 import Ajv from 'ajv';
-import { guideSchema } from './utils/guide.schema';
-import { sanitizeGuide } from './utils/guide.utilities';
+import { guideSchema } from './utilities/guide.schema';
+import { sanitizeGuide } from './utilities/guide.utilities';
 import Navbar from './components/navbar';
+import { useGuideStore } from './store/guide.store';
 
 function App() {
   const [areaName, setAreaName] = useState<string>();
   const [error, setError] = useState<string>();
-  const [guide, setGuide] = useState<IGuide | null>();
+  // const [guide, setGuide] = useState<IGuide | null>();
   const [start, setStart] = useState<boolean>(false);
+  const { guide } = useGuideStore((state) => state);
 
   const CLIENT_PATH =
     'C:\\Program Files (x86)\\Grinding Gear Games\\Path of Exile\\logs\\Client.txt';
@@ -32,54 +34,6 @@ function App() {
       setError(e);
     }
   }, 1000);
-
-  const handleOnClickClipboard = async () => {
-    const clipboardText = await readText();
-    console.log(clipboardText);
-
-    if (!clipboardText) return;
-
-    try {
-      const clipboardData = JSON.parse(clipboardText);
-
-      const avj = new Ajv();
-      const validate = avj.compile(guideSchema);
-
-      if (!validate(clipboardData)) {
-        console.log(validate.errors);
-        return;
-      }
-
-      saveGuide(clipboardText);
-      setGuide(clipboardData as IGuide);
-      sanitizeGuide(clipboardData as IGuide);
-    } catch (error) {
-      console.log("Couldn't parse clipboard data");
-    }
-  };
-
-  const handleOnClickLocalStorage = async () => {
-    const guide = getGuide();
-
-    if (!guide) return;
-    try {
-      const clipboardData = JSON.parse(guide);
-
-      const avj = new Ajv();
-      const validate = avj.compile(guideSchema);
-
-      if (!validate(clipboardData)) {
-        console.log(validate.errors);
-        return;
-      }
-
-      if (guide) {
-        setGuide(clipboardData as IGuide);
-      }
-    } catch (error) {
-      console.log("Couldn't parse localstorage data");
-    }
-  };
 
   useEffect(() => {
     if (!guide) return;

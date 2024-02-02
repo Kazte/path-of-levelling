@@ -1,4 +1,12 @@
-import { Archive, Clipboard, Info, Minus, X } from 'lucide-react';
+import {
+  Archive,
+  Clipboard,
+  Info,
+  Minus,
+  PencilRuler,
+  Trash,
+  X
+} from 'lucide-react';
 import { appWindow } from '@tauri-apps/api/window';
 
 import {
@@ -10,6 +18,9 @@ import {
   MenubarSeparator
 } from './ui/menubar';
 import { Button } from './ui/button';
+import { readText } from '@tauri-apps/api/clipboard';
+import { clearGuide, setNewGuide } from '@/utilities/guide.utilities';
+import { getGuide } from '@/utilities/save-guide';
 
 export default function Navbar() {
   const handleOnMinize = () => {
@@ -18,6 +29,26 @@ export default function Navbar() {
 
   const handleOnClose = () => {
     appWindow.close();
+  };
+
+  const handleOnCopyFromClipboard = async () => {
+    const clipboardText = await readText();
+
+    if (!clipboardText) return;
+
+    setNewGuide(clipboardText);
+  };
+
+  const handleOnCopyFromLocalStorage = () => {
+    const localStorageGuideText = getGuide();
+
+    if (!localStorageGuideText) return;
+
+    setNewGuide(localStorageGuideText);
+  };
+
+  const handleOnClearGuide = () => {
+    clearGuide();
   };
 
   return (
@@ -43,11 +74,25 @@ export default function Navbar() {
               </a>
             </MenubarItem>
             <MenubarSeparator />
-            <MenubarItem>
+            <MenubarItem onClick={handleOnCopyFromLocalStorage}>
               <Archive size={16} className='mr-2' /> Load from LocalStorage
             </MenubarItem>
-            <MenubarItem>
+            <MenubarItem onClick={handleOnCopyFromClipboard}>
               <Clipboard size={16} className='mr-2' /> Load from Clipboard
+            </MenubarItem>
+            <MenubarItem onClick={handleOnClearGuide}>
+              <Trash size={16} className='mr-2' /> Clear Guide
+            </MenubarItem>
+            <MenubarSeparator />
+            <MenubarItem asChild>
+              <a
+                href='https://heartofphos.github.io/exile-leveling/'
+                target='_blank'
+                rel='noreferrer'
+              >
+                <PencilRuler size={16} className='mr-2' />
+                Open Exile Leveling
+              </a>
             </MenubarItem>
             <MenubarSeparator />
             <MenubarItem onClick={handleOnClose}>
@@ -64,7 +109,7 @@ export default function Navbar() {
           size='icon'
           onClick={handleOnMinize}
         >
-          <Minus />
+          <Minus size={20} />
         </Button>
         <Button
           variant='destructive'
@@ -72,7 +117,7 @@ export default function Navbar() {
           size='icon'
           onClick={handleOnClose}
         >
-          <X />
+          <X size={20} />
         </Button>
       </div>
     </Menubar>
