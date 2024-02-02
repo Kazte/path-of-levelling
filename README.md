@@ -6,6 +6,7 @@
 - [Introduction](#introduction)
 - [Features](#features)
 - [Installation](#installation)
+- [Keyboard](#keyboard)
 - [License](#license)
 
 ## Introduction
@@ -22,6 +23,10 @@ This a aplication to help leveling in Path of Exile game. You can create and upl
 ## Installation
 
 1. Soon...
+
+## Keyboard
+
+- `Ctrl + Shift + Alt + F12` - Activate/Deactivate in game overlay.
 
 ## License
 

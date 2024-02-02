@@ -1,12 +1,16 @@
-import { IGuide, IStep, ISection } from '../interfaces/guide.interface';
+import {
+  IGuideImport,
+  IStepImport,
+  ISectionImport
+} from '../interfaces/guide-import.interface';
 import Ajv from 'ajv';
 import { guideSchema } from './guide.schema';
 import { useGuideStore } from '@/store/guide.store';
-import { removeGuide, saveGuide } from './save-guide';
+import { removeLocalStorage, saveLocalStorage } from './save-localstorage';
 
 const avj = new Ajv();
 
-export function sanitizeGuide(guide: IGuide): string {
+export function sanitizeGuide(guide: IGuideImport): string {
   let sanitizedSections = [];
 
   for (let section of guide) {
@@ -42,8 +46,8 @@ export function setNewGuide(guideText: string) {
       throw new Error('Invalid guide data');
     }
 
-    useGuideStore.setState({ guide: guideData });
-    saveGuide(guideText);
+    useGuideStore.setState({ guide: guideData as IGuideImport });
+    saveLocalStorage('guide', guideText);
   } catch (e) {
     console.error('Error setting new guide: \n', e);
   }
@@ -51,5 +55,5 @@ export function setNewGuide(guideText: string) {
 
 export function clearGuide() {
   useGuideStore.setState({ guide: null });
-  removeGuide();
+  removeLocalStorage('guide');
 }

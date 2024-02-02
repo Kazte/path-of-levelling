@@ -1440,6 +1440,11 @@ json5@^2.2.3:
   resolved "https://registry.yarnpkg.com/json5/-/json5-2.2.3.tgz#78cd6f1a19bdc12b73db5ad0c61efd66c1e29283"
   integrity sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==
 
+ktools-r@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/ktools-r/-/ktools-r-0.0.6.tgz#a23dc781212928707742446024a498ba9142504b"
+  integrity sha512-PO8YPJ7DfGvTOCk0fbj46Bzn1C/hvOYr8EQC9wTgk87osZW5nRgKG5DIjPUIRljdo57iXdppQwRARhA4C3iUHA==
+
 lilconfig@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/lilconfig/-/lilconfig-2.1.0.tgz#78e23ac89ebb7e1bfbf25b18043de756548e7f52"

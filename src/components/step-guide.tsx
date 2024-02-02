@@ -1,6 +1,6 @@
-import { IStep } from '../interfaces/guide.interface';
+import { IStepImport } from '../interfaces/guide-import.interface';
 
-export default function StepGuide({ step }: { step: IStep }) {
+export default function StepGuide({ step }: { step: IStepImport }) {
   return (
     <div>
       <h4>{step.type}</h4>
