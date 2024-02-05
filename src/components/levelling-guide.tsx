@@ -1,4 +1,4 @@
-import { IGuide, ISection, IStep } from '@/interfaces/guide.interface';
+import { IGuide } from '@/interfaces/guide.interface';
 import StepGuide from './step-guide';
 import {
   Accordion,
@@ -6,27 +6,32 @@ import {
   AccordionItem,
   AccordionTrigger
 } from './ui/accordion';
+import { cn } from '@/lib/utils';
+import { useGuideStore } from '@/store/guide.store';
 
 interface Props {
   levellingGuide: IGuide;
 }
 
 export default function LevellingGuide({ levellingGuide }: Props) {
+  const { currentStep } = useGuideStore((state) => state);
   return (
     <div>
-      {levellingGuide.map((section: ISection, index) => (
-        <Accordion key={index} type='single' collapsible>
-          <AccordionItem value='value-1'>
-            <AccordionTrigger>{section.name}</AccordionTrigger>
-            <AccordionContent>
-              {section.steps.map((step: IStep, index) => (
-                <div key={index} className='my-2 border-b-[1px] border-border'>
-                  <StepGuide step={step} />
-                </div>
-              ))}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+      {levellingGuide.map((step, index) => (
+        <div
+          key={index}
+          className={cn(
+            index < levellingGuide.length - 1 ? 'border-b-[1px]' : '',
+            currentStep === index && 'bg-neutral-700',
+            'py-2'
+          )}
+        >
+          {step.subSteps.map((subStep, index) => (
+            <div key={index}>
+              <p>{subStep.description}</p>
+            </div>
+          ))}
+        </div>
       ))}
     </div>
   );

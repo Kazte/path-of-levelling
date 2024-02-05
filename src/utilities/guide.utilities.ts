@@ -8,91 +8,129 @@ import Ajv from 'ajv';
 import { guideSchema } from './guide.schema';
 import { useGuideStore } from '@/store/guide.store';
 import { removeLocalStorage, saveLocalStorage } from './save-localstorage';
-import { IGuide, ISection, ISubstep } from '@/interfaces/guide.interface';
+import { IGuide, IStep, ISubstep } from '@/interfaces/guide.interface';
+import { quests } from '@/data/level-tracker-quests';
 
 const avj = new Ajv();
 
 export function sanitizeGuide(rawGuide: IGuideImport): IGuide {
+  const flatGuide: IStepImport[] = [...rawGuide]
+    .map((section) => section.steps)
+    .flat();
+  console.log('Flat Guide: ', flatGuide);
+
   let guide: IGuide = [];
 
-  for (const section of rawGuide) {
-    const s: ISection = {
-      name: section.name,
-      steps: []
-    };
+  const sanitizedStep: IStep[] = [];
+  let sanitizedSubsteps: ISubstep[] = [];
+  for (const step of flatGuide) {
+    // Sanitize Steps (Separate steps into area changes)
 
-    console.log('Sanitizing section: ', section.name);
+    let sanitizedSubstepDescription = '';
+    let isEnterStep = false;
+    let changeAreaId = '';
 
-    let subSteps: ISubstep[] = [];
-    section.steps.forEach((step: IStepImport) => {
-      let sanitizedStep = '';
-      let isEnterStep = false;
-      let changeAreaId = '';
+    step.parts.forEach((part: any) => {
+      // Sanitize Parts (Each part of a step)
+      if (typeof part === 'object') {
+        switch (part.type) {
+          case 'enter':
+            // @ts-ignore
+            const area = areas[part.areaId];
+            sanitizedSubstepDescription += area.name;
 
-      step.parts.forEach((part: any) => {
-        if (typeof part === 'object') {
-          switch (part.type) {
-            case 'enter':
+            isEnterStep = true;
+            changeAreaId = part.areaId;
+
+            break;
+          case 'kill':
+            sanitizedSubstepDescription += part.value;
+            break;
+          case 'arena':
+            sanitizedSubstepDescription += part.value;
+            break;
+          case 'area':
+            // @ts-ignore
+            sanitizedSubstepDescription += areas[part.areaId].name;
+            break;
+          case 'quest':
+            const quest = part.questId;
+
+            // @ts-ignore
+            const rewardOffers = quests[quest].reward_offers[quest];
+
+            if (rewardOffers) {
+              sanitizedSubstepDescription += `${rewardOffers.quest_npc}.`;
+            } else {
               // @ts-ignore
-              const area = areas[part.areaId];
-              sanitizedStep += area.name;
-
-              isEnterStep = true;
-              changeAreaId = part.areaId;
-
-              break;
-            case 'kill':
-              sanitizedStep += part.value;
-              break;
-            case 'quest':
-              sanitizedStep += part.questId + ' take rewards.';
-              break;
-            case 'waypoint_use':
-              // @ts-ignore
-              const dstArea = areas[part.dstAreaId].name;
-              // @ts-ignore
-              const srcArea = areas[part.srcAreaId].name;
-              sanitizedStep += `Use waypoint from ${srcArea} to ${dstArea}.`;
-              isEnterStep = true;
-              changeAreaId = part.dstAreaId;
-              break;
-            case 'waypoint_get':
-              sanitizedStep += `waypoint`;
-              break;
-            case 'logout':
-              sanitizedStep += 'Logout.';
-              isEnterStep = true;
-              changeAreaId = part.areaId;
-              break;
-            default:
-              sanitizedStep += part.value;
-              break;
-          }
-        } else {
-          sanitizedStep += part;
+              sanitizedSubstepDescription = `Complete ${quests[quest].name}`;
+            }
+            break;
+          case 'waypoint_use':
+            // @ts-ignore
+            const dstArea = areas[part.dstAreaId].name;
+            // @ts-ignore
+            const srcArea = areas[part.srcAreaId].name;
+            sanitizedSubstepDescription += `Use waypoint from ${srcArea} to ${dstArea}.`;
+            isEnterStep = true;
+            changeAreaId = part.dstAreaId;
+            break;
+          case 'portal_set':
+            // @ts-ignore
+            sanitizedSubstepDescription += 'portal';
+            break;
+          case 'portal_use':
+            // @ts-ignore
+            const dstAreaPortal = areas[part.dstAreaId].name;
+            sanitizedSubstepDescription += `portal to ${dstAreaPortal}.`;
+            break;
+          case 'waypoint_get':
+            sanitizedSubstepDescription += `waypoint`;
+            break;
+          case 'logout':
+            sanitizedSubstepDescription += 'Logout.';
+            isEnterStep = true;
+            changeAreaId = part.areaId;
+            break;
+          case 'trial':
+            sanitizedSubstepDescription += 'Trial';
+            break;
+          case 'crafting':
+            sanitizedSubstepDescription += 'crafting';
+            break;
+          case 'ascend':
+            sanitizedSubstepDescription += `Complete the ${part.version}_lab`;
+            break;
+          default:
+            sanitizedSubstepDescription +=
+              part.value || 'PART NOT FOUND: ' + part.type;
+            break;
         }
-      });
-
-      subSteps.push({
-        description: sanitizedStep
-      });
-
-      if (isEnterStep) {
-        s.steps.push({
-          subSteps: subSteps,
-          changeAreaId: changeAreaId
-        });
-        subSteps = [];
-        changeAreaId = '';
+      } else {
+        sanitizedSubstepDescription += part;
       }
-
-      console.log('Sanitizing step: ', sanitizedStep);
     });
 
-    guide.push(s);
+    sanitizedSubsteps.push({
+      description: sanitizedSubstepDescription
+    });
+
+    console.log('Sanitized Substeps: ', sanitizedSubsteps);
+
+    if (isEnterStep) {
+      sanitizedStep.push({
+        subSteps: sanitizedSubsteps,
+        changeAreaId
+      });
+
+      sanitizedSubsteps = [];
+    }
   }
 
-  console.log('Sanitized guide: ', guide);
+  guide = sanitizedStep;
+
+  console.log('Sanitized Guide: ', guide);
+
   return guide;
 }
 
@@ -105,14 +143,17 @@ export function setNewGuide(guideText: string) {
     if (!validate(guideData)) {
       throw new Error('Invalid guide data');
     }
-    useGuideStore.setState({ guide: sanitizeGuide(guideData as IGuideImport) });
-    saveLocalStorage('guide', guideText);
+    useGuideStore.setState({
+      guide: sanitizeGuide(guideData as IGuideImport),
+      currentStep: 0
+    });
+    // saveLocalStorage('guide', guideText);
   } catch (e) {
     console.error('Error setting new guide: \n', e);
   }
 }
 
 export function clearGuide() {
-  useGuideStore.setState({ guide: null });
-  removeLocalStorage('guide');
+  useGuideStore.setState({ guide: null, currentStep: null });
+  // removeLocalStorage('guide');
 }

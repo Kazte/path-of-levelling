@@ -1,9 +1,9 @@
-export type IGuide = ISection[];
+export type IGuide = IStep[];
 
-export interface ISection {
-  name: string;
-  steps: IStep[];
-}
+// export interface ISection {
+//   name: string;
+//   steps: IStep[];
+// }
 
 export interface IStep {
   subSteps: ISubstep[];

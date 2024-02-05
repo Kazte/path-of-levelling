@@ -22,11 +22,18 @@ import {
   register,
   unregister
 } from '@tauri-apps/api/globalShortcut';
+import { ISubstep } from './interfaces/guide.interface';
 
 function App() {
   const [areaName, setAreaName] = useState<string>();
 
-  const { guide } = useGuideStore((state) => state);
+  const {
+    guide,
+    currentStep,
+    setCurrentStep,
+    setAddCurrentStep,
+    setSubtractCurrentStep
+  } = useGuideStore((state) => state);
   const { setAppState, appScanningState, setAppScanningState } = useAppStore(
     (state) => state
   );
@@ -55,6 +62,16 @@ function App() {
       setAppState(AppState.NORMAL);
     }
   };
+
+  useEffect(() => {
+    if (guide === null || currentStep === null) return;
+
+    // if (appState === AppState.IN_GAME) {
+    if (areaName === guide[currentStep].changeAreaId) {
+      setCurrentStep(currentStep + 1);
+    }
+    // }
+  }, [areaName]);
 
   useEffect(() => {
     if (appState === AppState.TEST) {
@@ -121,8 +138,30 @@ function App() {
         });
       }
     });
+
+    isRegistered('CmdOrCtrl+Shift+Alt+PageUp').then((isRegistered) => {
+      if (!isRegistered) {
+        register('CmdOrCtrl+Shift+Alt+PageUp', () => {
+          if (currentStep === null) return;
+          setAddCurrentStep();
+        });
+      }
+    });
+
+    isRegistered('CmdOrCtrl+Shift+Alt+PageDown').then((isRegistered) => {
+      if (!isRegistered) {
+        // TODO: Change to arrows
+        register('CmdOrCtrl+Shift+Alt+PageDown', () => {
+          if (currentStep === null) return;
+          setSubtractCurrentStep();
+        });
+      }
+    });
+
     return () => {
       unregister('CmdOrCtrl+Shift+Alt+F12');
+      unregister('CmdOrCtrl+Shift+Alt+PageUp');
+      unregister('CmdOrCtrl+Shift+Alt+PageDown');
     };
   }, [appState]);
 
@@ -163,8 +202,22 @@ function App() {
         </section>
       </Switch.Case>
       <Switch.Case condition={appState === AppState.IN_GAME}>
-        <section className='w-full h-full text-center flex flex-col gap-2 justify-center items-center select-none'>
-          {areaName && <h2>{areaName}</h2>}
+        <section className='w-full h-full text-center flex flex-row gap-2 justify-around items-center select-none'>
+          <p>PgDn</p>
+          <div className='flex flex-col gap-1'>
+            {guide && currentStep !== null && (
+              <>
+                {guide[currentStep].subSteps.map(
+                  (subStep: ISubstep, index: number) => (
+                    <div key={index}>
+                      <p>{subStep.description}</p>
+                    </div>
+                  )
+                )}
+              </>
+            )}
+          </div>
+          <p>PgUp</p>
         </section>
       </Switch.Case>
       <Switch.Default>

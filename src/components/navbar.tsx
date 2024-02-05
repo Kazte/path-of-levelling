@@ -105,9 +105,9 @@ export default function Navbar() {
               </a>
             </MenubarItem>
             <MenubarSeparator />
-            <MenubarItem onClick={handleOnCopyFromLocalStorage}>
+            {/* <MenubarItem onClick={handleOnCopyFromLocalStorage}>
               <Archive size={16} className='mr-2' /> Load from LocalStorage
-            </MenubarItem>
+            </MenubarItem> */}
             <MenubarItem onClick={handleOnCopyFromClipboard}>
               <Clipboard size={16} className='mr-2' /> Load from Clipboard
             </MenubarItem>
@@ -155,7 +155,7 @@ export default function Navbar() {
         >
           <BoxSelect size={20} className='mr-2' /> Set Display
         </Button>
-        {/* <Button
+        <Button
           onClick={handleOnChangeScanning}
           className={cn(
             'w-fit h-fit py-[2px] px-[4px]',
@@ -175,7 +175,7 @@ export default function Navbar() {
               <Eye size={20} className='mr-2' /> Scanning
             </>
           )}
-        </Button> */}
+        </Button>
         <Button
           variant='secondary'
           className='h-1/2 w-1/2'
