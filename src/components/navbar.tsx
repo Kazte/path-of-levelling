@@ -1,5 +1,4 @@
 import {
-  Archive,
   BoxSelect,
   Clipboard,
   Eye,
@@ -23,7 +22,6 @@ import {
 import { Button } from './ui/button';
 import { readText } from '@tauri-apps/api/clipboard';
 import { clearGuide, setNewGuide } from '@/utilities/guide.utilities';
-import { getLocalStorage } from '@/utilities/save-localstorage';
 import { cn } from '@/lib/utils';
 import { AppScanningState, AppState, useAppStore } from '@/store/app.store';
 import logo from '@/assets/icon.ico';
@@ -47,14 +45,6 @@ export default function Navbar() {
     if (!clipboardText) return;
 
     setNewGuide(clipboardText);
-  };
-
-  const handleOnCopyFromLocalStorage = () => {
-    const localStorageGuideText = getLocalStorage('guide');
-
-    if (!localStorageGuideText) return;
-
-    setNewGuide(localStorageGuideText);
   };
 
   const handleOnClearGuide = () => {
@@ -105,9 +95,6 @@ export default function Navbar() {
               </a>
             </MenubarItem>
             <MenubarSeparator />
-            {/* <MenubarItem onClick={handleOnCopyFromLocalStorage}>
-              <Archive size={16} className='mr-2' /> Load from LocalStorage
-            </MenubarItem> */}
             <MenubarItem onClick={handleOnCopyFromClipboard}>
               <Clipboard size={16} className='mr-2' /> Load from Clipboard
             </MenubarItem>

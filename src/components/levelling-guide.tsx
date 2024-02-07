@@ -1,11 +1,4 @@
 import { IGuide } from '@/interfaces/guide.interface';
-import StepGuide from './step-guide';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger
-} from './ui/accordion';
 import { cn } from '@/lib/utils';
 import { useGuideStore } from '@/store/guide.store';
 

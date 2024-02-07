@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
 
 export enum AppState {
   NORMAL = 'NORMAL',

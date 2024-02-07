@@ -1,13 +1,11 @@
-import { IAreaData, areas } from '@/data/level-tracker-areas';
+import { areas } from '@/data/level-tracker-areas';
 import {
   IGuideImport,
-  IStepImport,
-  ISectionImport
+  IStepImport
 } from '../interfaces/guide-import.interface';
 import Ajv from 'ajv';
 import { guideSchema } from './guide.schema';
 import { useGuideStore } from '@/store/guide.store';
-import { removeLocalStorage, saveLocalStorage } from './save-localstorage';
 import { IGuide, IStep, ISubstep } from '@/interfaces/guide.interface';
 import { quests } from '@/data/level-tracker-quests';
 

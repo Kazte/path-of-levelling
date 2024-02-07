@@ -16,7 +16,7 @@ interface Actions {
 
 export const useGuideStore = create<States & Actions>()(
   persist(
-    (set, get) => {
+    (set) => {
       return {
         guide: null,
         currentStep: null,

@@ -254,7 +254,7 @@ function App() {
         <main className='flex-grow p-2 overflow-y-auto'>
           <Switch>
             <Switch.Case condition={!!guide}>
-              <LevellingGuide levellingGuide={guide} />
+              <LevellingGuide levellingGuide={guide!} />
             </Switch.Case>
             <Switch.Default>
               <div className='flex-grow p-2'>
