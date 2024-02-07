@@ -7,20 +7,31 @@ interface Props {
 }
 
 export default function LevellingGuide({ levellingGuide }: Props) {
-  const { currentStep } = useGuideStore((state) => state);
+  const { currentStep, setCurrentStep } = useGuideStore((state) => state);
+
+  const handleOnClick = (index: number) => {
+    console.log('index', index);
+    setCurrentStep(index);
+  };
+
   return (
     <div>
-      {levellingGuide.map((step, index) => (
+      {levellingGuide.map((step, i) => (
         <div
-          key={index}
+          key={i}
           className={cn(
-            index < levellingGuide.length - 1 ? 'border-b-[1px]' : '',
-            currentStep === index && 'bg-neutral-700',
+            i < levellingGuide.length - 1 ? 'border-b-[1px]' : '',
+            currentStep === i && 'bg-neutral-700',
             'py-2'
           )}
         >
-          {step.subSteps.map((subStep, index) => (
-            <div key={index}>
+          {step.subSteps.map((subStep, j) => (
+            <div
+              key={j}
+              onClick={() => {
+                handleOnClick(i);
+              }}
+            >
               <p>{subStep.description}</p>
             </div>
           ))}
