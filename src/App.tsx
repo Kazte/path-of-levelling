@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useInterval } from './hooks/useInterval';
 import { invoke } from '@tauri-apps/api';
 import LevellingGuide from './components/levelling-guide';
-import { sanitizeGuide } from './utilities/guide.utilities';
 import Navbar from './components/navbar';
 import { useGuideStore } from './store/guide.store';
 import { Switch } from 'ktools-r';
@@ -10,7 +9,8 @@ import { AppScanningState, AppState, useAppStore } from './store/app.store';
 import {
   LogicalPosition,
   LogicalSize,
-  appWindow
+  appWindow,
+  availableMonitors
 } from '@tauri-apps/api/window';
 import { Button } from './components/ui/button';
 import {
@@ -23,9 +23,92 @@ import {
   unregister
 } from '@tauri-apps/api/globalShortcut';
 import { ISubstep } from './interfaces/guide.interface';
+import useMachine, { IState } from './hooks/useMachine';
+
+const appStates: IState[] = [
+  {
+    name: 'normal',
+    on: {
+      enter: async () => {
+        const monitors = await availableMonitors();
+        const monitorSize = monitors[0].size;
+
+        appWindow.setPosition(
+          new LogicalPosition(
+            monitorSize.width / 2 - 400,
+            monitorSize.height / 2 - 300
+          )
+        );
+
+        appWindow.setSize(new LogicalSize(800, 600));
+        appWindow.setAlwaysOnTop(false);
+        appWindow.setIgnoreCursorEvents(false);
+
+        useAppStore.setState({
+          appScanningState: AppScanningState.NOT_SCANNING
+        });
+      },
+      leave: () => {}
+    }
+  },
+  {
+    name: 'in-game',
+    on: {
+      enter: () => {
+        const { x: displayPositionX, y: displayPositionY } = JSON.parse(
+          getLocalStorage('display-position') || '{"x": 0, "y": 0}'
+        );
+
+        appWindow.setPosition(
+          new LogicalPosition(displayPositionX, displayPositionY)
+        );
+        appWindow.setSize(new LogicalSize(480, 120));
+        appWindow.setAlwaysOnTop(true);
+        appWindow.setIgnoreCursorEvents(true);
+        document.body.classList.add('bg-background/70');
+
+        useAppStore.setState({
+          appScanningState: AppScanningState.SCANNING
+        });
+      },
+      leave: () => {
+        document.body.classList.remove('bg-background/70');
+      }
+    }
+  },
+  {
+    name: 'test',
+    on: {
+      enter: () => {
+        const { x: displayPositionX, y: displayPositionY } = JSON.parse(
+          getLocalStorage('display-position') || '{"x": 0, "y": 0}'
+        );
+
+        appWindow.setPosition(
+          new LogicalPosition(displayPositionX, displayPositionY)
+        );
+
+        appWindow.setSize(new LogicalSize(480, 120));
+        appWindow.setAlwaysOnTop(true);
+        appWindow.setIgnoreCursorEvents(false);
+        document.body.classList.add('bg-background/70');
+        document.body.classList.add('border-2');
+        document.body.classList.add('border-primary');
+        document.body.classList.add('border-dashed');
+      },
+      leave: () => {
+        document.body.classList.remove('bg-background/70');
+        document.body.classList.remove('border-2');
+        document.body.classList.remove('border-primary');
+        document.body.classList.remove('border-dashed');
+      }
+    }
+  }
+];
 
 function App() {
   const [areaName, setAreaName] = useState<string>();
+  const { transition } = useMachine(appStates, 'normal');
 
   const {
     guide,
@@ -34,9 +117,7 @@ function App() {
     setAddCurrentStep,
     setSubtractCurrentStep
   } = useGuideStore((state) => state);
-  const { setAppState, appScanningState, setAppScanningState } = useAppStore(
-    (state) => state
-  );
+  const { setAppState, appScanningState } = useAppStore((state) => state);
   const appState = useAppStore((state) => state.appState);
 
   const CLIENT_PATH =
@@ -55,86 +136,12 @@ function App() {
     }
   }, 1000);
 
-  const _setAppState = () => {
-    if (appState === AppState.NORMAL) {
-      setAppState(AppState.IN_GAME);
-    } else if (appState === AppState.IN_GAME) {
-      setAppState(AppState.NORMAL);
-    }
-  };
-
   useEffect(() => {
-    if (guide === null || currentStep === null) return;
-
-    // if (appState === AppState.IN_GAME) {
-    if (areaName === guide[currentStep].changeAreaId) {
-      setCurrentStep(currentStep + 1);
-    }
-    // }
-  }, [areaName]);
-
-  useEffect(() => {
-    if (appState === AppState.TEST) {
-      // Save last position of the window
-      appWindow.innerPosition().then(({ x, y }) => {
-        saveLocalStorage('last-window-position', JSON.stringify({ x, y }));
-
-        const { x: displayPositionX, y: displayPositionY } = JSON.parse(
-          getLocalStorage('display-position') || '{"x": 0, "y": 0}'
-        );
-
-        appWindow.setPosition(
-          new LogicalPosition(displayPositionX, displayPositionY)
-        );
-        appWindow.setSize(new LogicalSize(480, 120));
-        appWindow.setAlwaysOnTop(true);
-        appWindow.setIgnoreCursorEvents(false);
-        document.body.classList.add('bg-background/70');
-        document.body.classList.add('border-2');
-        document.body.classList.add('border-primary');
-        document.body.classList.add('border-dashed');
-      });
-    } else if (appState === AppState.NORMAL) {
-      const lastPosition = JSON.parse(
-        getLocalStorage('last-window-position') || '{"x": 100, "y": 100}'
-      );
-
-      appWindow.setPosition(
-        new LogicalPosition(lastPosition.x, lastPosition.y)
-      );
-      appWindow.setSize(new LogicalSize(800, 600));
-      appWindow.setAlwaysOnTop(false);
-      appWindow.setIgnoreCursorEvents(false);
-      document.body.classList.remove('bg-background/70');
-      document.body.classList.remove('border-2');
-      document.body.classList.remove('border-primary');
-      document.body.classList.remove('border-dashed');
-
-      setAppScanningState(AppScanningState.NOT_SCANNING);
-    } else if (appState === AppState.IN_GAME) {
-      appWindow.innerPosition().then(({ x, y }) => {
-        saveLocalStorage('last-window-position', JSON.stringify({ x, y }));
-
-        const { x: displayPositionX, y: displayPositionY } = JSON.parse(
-          getLocalStorage('display-position') || '{"x": 0, "y": 0}'
-        );
-
-        appWindow.setPosition(
-          new LogicalPosition(displayPositionX, displayPositionY)
-        );
-        appWindow.setSize(new LogicalSize(480, 120));
-        appWindow.setAlwaysOnTop(true);
-        appWindow.setIgnoreCursorEvents(true);
-        document.body.classList.add('bg-background/70');
-
-        setAppScanningState(AppScanningState.SCANNING);
-      });
-    }
     // Binding
     isRegistered('CmdOrCtrl+Shift+Alt+F12').then((isRegistered) => {
       if (!isRegistered) {
         register('CmdOrCtrl+Shift+Alt+F12', () => {
-          _setAppState();
+          setAppState(AppState.NORMAL);
         });
       }
     });
@@ -163,6 +170,30 @@ function App() {
       unregister('CmdOrCtrl+Shift+Alt+PageUp');
       unregister('CmdOrCtrl+Shift+Alt+PageDown');
     };
+  }, []);
+
+  useEffect(() => {
+    if (guide === null || currentStep === null) return;
+
+    // if (appState === AppState.IN_GAME) {
+    if (areaName === guide[currentStep].changeAreaId) {
+      setCurrentStep(currentStep + 1);
+    }
+    // }
+  }, [areaName]);
+
+  useEffect(() => {
+    switch (appState) {
+      case AppState.NORMAL:
+        transition('normal');
+        break;
+      case AppState.IN_GAME:
+        transition('in-game');
+        break;
+      case AppState.TEST:
+        transition('test');
+        break;
+    }
   }, [appState]);
 
   const handleOnSetPlace = async () => {
@@ -203,7 +234,6 @@ function App() {
       </Switch.Case>
       <Switch.Case condition={appState === AppState.IN_GAME}>
         <section className='w-full h-full text-center flex flex-row gap-2 justify-around items-center select-none'>
-          <p>PgDn</p>
           <div className='flex flex-col gap-1'>
             {guide && currentStep !== null && (
               <>
@@ -217,7 +247,6 @@ function App() {
               </>
             )}
           </div>
-          <p>PgUp</p>
         </section>
       </Switch.Case>
       <Switch.Default>
