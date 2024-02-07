@@ -26,7 +26,9 @@ This a aplication to help leveling in Path of Exile game. You can create and upl
 
 ## Keyboard
 
-- `Ctrl + Shift + Alt + F12` - Activate/Deactivate in game overlay.
+- `Ctrl + Shift + Alt + F12` - Deactivate in game overlay.
+- `Ctrl + Shift + Alt + PgUp` - Next step.
+- `Ctrl + Shift + Alt + PgDown` - Previous step.
 
 ## License
 
