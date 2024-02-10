@@ -1,9 +1,38 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use tauri::Manager;
+use tauri::{CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
+
 #[tokio::main]
 async fn main() {
+    // create the system tray
+    let open_app = CustomMenuItem::new("open_app".to_string(), "Open App");
+    let quit_app = CustomMenuItem::new("quit_app".to_string(), "Quit App");
+    let tray_menu = SystemTrayMenu::new()
+        .add_item(open_app)
+        .add_native_item(SystemTrayMenuItem::Separator)
+        .add_item(quit_app);
+
+    let system_tray = SystemTray::new().with_menu(tray_menu);
+
     tauri::Builder::default()
+        .system_tray(system_tray)
+        .on_system_tray_event(|app, event| match event {
+            SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
+                "open_app" => {
+                    app.get_window("main").unwrap().show().unwrap();
+
+                    // send event to the frontend
+                    app.emit_all::<()>("showWindow", {}).unwrap();
+                }
+                "quit_app" => {
+                    app.exit(0);
+                }
+                _ => {}
+            },
+            _ => {}
+        })
         .invoke_handler(tauri::generate_handler![get_area_name])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

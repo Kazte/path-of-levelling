@@ -38,7 +38,8 @@
         "setSize": true,
         "setAlwaysOnTop": true,
         "startDragging": true,
-        "minimize": true
+        "minimize": true,
+        "hide": true
       }
     },
     "bundle": {
@@ -49,6 +50,11 @@
     },
     "security": {
       "csp": null
+    },
+    "systemTray": {
+      "iconPath": "icons/icon.ico",
+      "iconAsTemplate": true,
+      "title": "PoE Guides"
     },
     "windows": [
       {
