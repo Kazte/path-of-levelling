@@ -31,6 +31,12 @@
     @apply text-base;
   }
 
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
   /* button {
     @apply bg-neutral-950 text-white font-bold py-1 px-2 rounded border-2 border-white hover:bg-neutral-800 transition-colors duration-300 active:bg-neutral-700 active:text-white active:transition-none;
   } */
@@ -111,6 +117,6 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground border-[1px];
+    @apply bg-background text-foreground border-[2px];
   }
 }
