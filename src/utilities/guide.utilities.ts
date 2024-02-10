@@ -69,7 +69,8 @@ export function sanitizeGuide(rawGuide: IGuideImport): IGuide {
             const dstArea = areas[part.dstAreaId].name;
             // @ts-ignore
             const srcArea = areas[part.srcAreaId].name;
-            sanitizedSubstepDescription += `Use waypoint from ${srcArea} to ${dstArea}.`;
+            // sanitizedSubstepDescription += `Use waypoint from ${srcArea} to ${dstArea}.`;
+            sanitizedSubstepDescription += `Use waypoint to ${dstArea}.`;
             isEnterStep = true;
             changeAreaId = part.dstAreaId;
             break;
@@ -99,6 +100,7 @@ export function sanitizeGuide(rawGuide: IGuideImport): IGuide {
           case 'ascend':
             sanitizedSubstepDescription += `Complete the ${part.version}_lab`;
             break;
+          // TODO: waypoint
           default:
             sanitizedSubstepDescription +=
               part.value || 'PART NOT FOUND: ' + part.type;

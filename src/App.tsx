@@ -24,7 +24,10 @@ import {
 } from '@tauri-apps/api/globalShortcut';
 import { ISubstep } from './interfaces/guide.interface';
 import useMachine, { IState } from './hooks/useMachine';
+import { TauriEvent, UnlistenFn } from '@tauri-apps/api/event';
+import { listen } from '@tauri-apps/api/event';
 
+//#region AppStates
 const appStates: IState[] = [
   {
     name: 'normal',
@@ -70,6 +73,7 @@ const appStates: IState[] = [
         useAppStore.setState({
           appScanningState: AppScanningState.SCANNING
         });
+        // appWindow.hide();
       },
       leave: () => {
         document.body.classList.remove('bg-background/70');
@@ -106,6 +110,8 @@ const appStates: IState[] = [
   }
 ];
 
+//#endregion
+
 function App() {
   const [areaName, setAreaName] = useState<string>();
   const { transition } = useMachine(appStates, 'normal');
@@ -136,40 +142,52 @@ function App() {
     }
   }, 1000);
 
+  //#region Shortcuts
   useEffect(() => {
-    // Binding
-    isRegistered('CmdOrCtrl+Shift+Alt+F12').then((isRegistered) => {
-      if (!isRegistered) {
-        register('CmdOrCtrl+Shift+Alt+F12', () => {
-          setAppState(AppState.NORMAL);
-        });
-      }
-    });
-
-    isRegistered('CmdOrCtrl+Shift+Alt+PageUp').then((isRegistered) => {
-      if (!isRegistered) {
-        register('CmdOrCtrl+Shift+Alt+PageUp', () => {
-          if (currentStep === null) return;
-          setAddCurrentStep();
-        });
-      }
-    });
-
-    isRegistered('CmdOrCtrl+Shift+Alt+PageDown').then((isRegistered) => {
-      if (!isRegistered) {
-        // TODO: Change to arrows
-        register('CmdOrCtrl+Shift+Alt+PageDown', () => {
-          if (currentStep === null) return;
-          setSubtractCurrentStep();
-        });
-      }
-    });
-
+    registerShortcuts();
     return () => {
       unregister('CmdOrCtrl+Shift+Alt+F12');
       unregister('CmdOrCtrl+Shift+Alt+PageUp');
       unregister('CmdOrCtrl+Shift+Alt+PageDown');
     };
+  }, []);
+
+  const registerShortcuts = async () => {
+    let ir: boolean = await isRegistered('CmdOrCtrl+Shift+Alt+F12');
+
+    console.log('CmdOrCtrl+Shift+Alt+F12', ir);
+    if (!ir) {
+      await register('CmdOrCtrl+Shift+Alt+F12', () => {
+        setAppState(AppState.NORMAL);
+      });
+    }
+
+    ir = await isRegistered('CmdOrCtrl+Shift+Alt+ArrowRight');
+    console.log('CmdOrCtrl+Shift+Alt+ArrowRight', ir);
+    if (!ir) {
+      await register('CmdOrCtrl+Shift+Alt+ArrowRight  ', () => {
+        if (currentStep === null) return;
+        setAddCurrentStep();
+      });
+    }
+
+    ir = await isRegistered('CmdOrCtrl+Shift+Alt+ArrowLeft');
+    console.log('CmdOrCtrl+Shift+Alt+ArrowLeft', ir);
+    if (!ir) {
+      // TODO: Change to arrows
+      await register('CmdOrCtrl+Shift+Alt+ArrowLeft', () => {
+        if (currentStep === null) return;
+        setSubtractCurrentStep();
+      });
+    }
+  };
+  //#endregion
+
+  useEffect(() => {
+    listen('showWindow', (event) => {
+      console.log('showWindow', event);
+      setAppState(AppState.NORMAL);
+    });
   }, []);
 
   useEffect(() => {
@@ -181,6 +199,16 @@ function App() {
     }
     // }
   }, [areaName]);
+
+  useEffect(() => {
+    if (appState === AppState.NORMAL) {
+      // Scroll to current step
+      const element = document.getElementById(`step-${currentStep}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [currentStep]);
 
   useEffect(() => {
     switch (appState) {
@@ -235,8 +263,11 @@ function App() {
       <Switch.Case condition={appState === AppState.IN_GAME}>
         <section className='w-full h-full text-center flex flex-row gap-2 justify-around items-center select-none'>
           <div className='flex flex-col gap-1'>
-            {guide && currentStep !== null && (
+            {guide !== null && currentStep !== null && (
               <>
+                <p className='text-sm opacity-50 underline absolute top-1 left-1'>
+                  Step: {currentStep}
+                </p>
                 {guide[currentStep].subSteps.map(
                   (subStep: ISubstep, index: number) => (
                     <div key={index}>

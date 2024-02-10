@@ -9,29 +9,21 @@ interface Props {
 export default function LevellingGuide({ levellingGuide }: Props) {
   const { currentStep, setCurrentStep } = useGuideStore((state) => state);
 
-  const handleOnClick = (index: number) => {
-    console.log('index', index);
-    setCurrentStep(index);
-  };
-
   return (
     <div>
       {levellingGuide.map((step, i) => (
         <div
           key={i}
+          id={`step-${i}`}
           className={cn(
             i < levellingGuide.length - 1 ? 'border-b-[1px]' : '',
             currentStep === i && 'bg-neutral-700',
-            'py-2'
+            'p-1'
           )}
         >
+          <p className='text-sm opacity-50 underline'>Step: {i + 1}</p>
           {step.subSteps.map((subStep, j) => (
-            <div
-              key={j}
-              onClick={() => {
-                handleOnClick(i);
-              }}
-            >
+            <div key={j}>
               <p>{subStep.description}</p>
             </div>
           ))}
