@@ -1,12 +1,8 @@
 import {
   BoxSelect,
   Clipboard,
-  Eye,
-  EyeOff,
   Info,
   Minus,
-  MoveRight,
-  PanelTopClose,
   PencilRuler,
   Play,
   StepForward,
@@ -56,7 +52,7 @@ export default function Navbar() {
   const [openOverrideDialog, setOpenOverrideDialog] = useState(false);
   const [openGotoStepDialog, setOpenGotoStepDialog] = useState(false);
 
-  const [gotoStep, setGotoStep] = useState();
+  const [gotoStep, setGotoStep] = useState(0);
 
   const handleOnMinize = () => {
     appWindow.minimize();
@@ -92,13 +88,13 @@ export default function Navbar() {
     setNewGuide(clipboardText);
   };
 
-  const handleOnChangeScanning = () => {
-    setAppScanningState(
-      appScanningState === AppScanningState.NOT_SCANNING
-        ? AppScanningState.SCANNING
-        : AppScanningState.NOT_SCANNING
-    );
-  };
+  // const handleOnChangeScanning = () => {
+  //   setAppScanningState(
+  //     appScanningState === AppScanningState.NOT_SCANNING
+  //       ? AppScanningState.SCANNING
+  //       : AppScanningState.NOT_SCANNING
+  //   );
+  // };
 
   const handleGotoStep = () => {
     setCurrentStep(gotoStep - 1);
@@ -159,7 +155,9 @@ export default function Navbar() {
             <Input
               type='number'
               placeholder='Step'
-              onChange={(e) => setGotoStep(parseInt(e.target.value))}
+              onChange={(e) => {
+                setGotoStep(parseInt(e.target.value));
+              }}
             />
           </AlertDialogDescription>
           <AlertDialogFooter>
@@ -218,7 +216,6 @@ export default function Navbar() {
                   <MenubarItem
                     onClick={handleOnTest}
                     // className={cn('w-fit h-fit py-[2px] px-[4px]')}
-                    size='icon'
                   >
                     <BoxSelect size={20} className='mr-2' /> Set Display
                   </MenubarItem>
