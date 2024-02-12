@@ -100,7 +100,9 @@ export function sanitizeGuide(rawGuide: IGuideImport): IGuide {
           case 'ascend':
             sanitizedSubstepDescription += `Complete the ${part.version}_lab`;
             break;
-          // TODO: waypoint
+          case 'waypoint':
+            sanitizedSubstepDescription += 'waypoint';
+            break;
           default:
             sanitizedSubstepDescription +=
               part.value || 'PART NOT FOUND: ' + part.type;
