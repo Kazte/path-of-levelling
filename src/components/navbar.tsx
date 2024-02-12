@@ -26,7 +26,7 @@ import { Button } from './ui/button';
 import { readText } from '@tauri-apps/api/clipboard';
 import { clearGuide, setNewGuide } from '@/utilities/guide.utilities';
 import { cn } from '@/lib/utils';
-import { AppScanningState, AppState, useAppStore } from '@/store/app.store';
+import { AppState, useAppStore } from '@/store/app.store';
 import logo from '@/assets/icon.ico';
 import {
   AlertDialog,
@@ -43,9 +43,7 @@ import { useGuideStore } from '@/store/guide.store';
 import { Input } from './ui/input';
 
 export default function Navbar() {
-  const { setAppState, appScanningState, setAppScanningState } = useAppStore(
-    (state) => state
-  );
+  const { setAppState } = useAppStore((state) => state);
   const { guide, setCurrentStep } = useGuideStore((state) => state);
 
   const [openClearDialog, setOpenClearDialog] = useState(false);

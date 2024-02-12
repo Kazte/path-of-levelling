@@ -156,6 +156,6 @@ export function setNewGuide(guideText: string) {
 }
 
 export function clearGuide() {
-  useGuideStore.setState({ guide: null, currentStep: null });
+  useGuideStore.setState({ guide: null, currentStep: 0 });
   // removeLocalStorage('guide');
 }

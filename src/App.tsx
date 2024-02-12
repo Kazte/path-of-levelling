@@ -24,7 +24,6 @@ import {
 } from '@tauri-apps/api/globalShortcut';
 import { ISubstep } from './interfaces/guide.interface';
 import useMachine, { IState } from './hooks/useMachine';
-import { TauriEvent, UnlistenFn } from '@tauri-apps/api/event';
 import { listen } from '@tauri-apps/api/event';
 
 //#region AppStates

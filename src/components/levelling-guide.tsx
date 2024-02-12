@@ -7,7 +7,7 @@ interface Props {
 }
 
 export default function LevellingGuide({ levellingGuide }: Props) {
-  const { currentStep, setCurrentStep } = useGuideStore((state) => state);
+  const { currentStep } = useGuideStore((state) => state);
 
   return (
     <div>
