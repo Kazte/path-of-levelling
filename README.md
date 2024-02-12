@@ -1,12 +1,10 @@
 <h1 align='center'>Poe Guides</h1>
 
-## Table of Contents
-
-- [Table of Contents](#table-of-contents)
 - [Introduction](#introduction)
 - [Features](#features)
 - [Installation](#installation)
 - [Keyboard](#keyboard)
+- [To Do](#to-do)
 - [License](#license)
 
 ## Introduction
@@ -29,6 +27,12 @@ This a aplication to help leveling in Path of Exile game. You can create and upl
 - `Ctrl + Shift + Alt + F12` - Deactivate in game overlay.
 - `Ctrl + Shift + Alt + PgUp` - Next step.
 - `Ctrl + Shift + Alt + PgDown` - Previous step.
+
+## To Do
+
+- [ ] Add Substeps/Tips support.
+- [ ] Add images.
+- [ ] Add maps layout.
 
 ## License
 
