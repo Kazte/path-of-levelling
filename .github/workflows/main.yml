@@ -41,14 +41,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
-      - name: setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8.14.1
       - name: remove lockfile
-        run: rm pnpm-lock.yaml
-      - name: Install frontend dependencies
-        run: pnpm install
+        run: rm yarn.lock
+      - name: install frontend dependencies
+        run: yarn install
 
       - name: Build app
         uses: tauri-apps/tauri-action@dev
