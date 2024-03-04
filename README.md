@@ -20,7 +20,7 @@ This a aplication to help leveling in Path of Exile game. You can create and upl
 
 ## Installation
 
-1. Soon...
+Download the latest version [Here](https://github.com/Kazte/poe-guides/releases).
 
 ## Keyboard
 
