@@ -7,7 +7,7 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "PoE Guides",
+    "productName": "Path of Levelling",
     "version": "0.0.1"
   },
   "tauri": {
@@ -45,7 +45,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.poeguides.dev",
+      "identifier": "com.path-of-levelling.dev",
       "icon": ["icons/32x32.png", "icons/128x128.png", "icons/icon.ico"]
     },
     "security": {
@@ -54,11 +54,11 @@
     "systemTray": {
       "iconPath": "icons/icon.ico",
       "iconAsTemplate": true,
-      "title": "PoE Guides"
+      "title": "Path of Levelling"
     },
     "windows": [
       {
-        "title": "PoE Guides",
+        "title": "Path of Levelling",
         "fullscreen": false,
         "resizable": false,
         "width": 800,
