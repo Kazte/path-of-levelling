@@ -1,4 +1,4 @@
-<h1 align='center'>Poe Guides</h1>
+<h1 align='center'>Path of Levelling</h1>
 
 - [Introduction](#introduction)
 - [Features](#features)
@@ -20,7 +20,7 @@ This a aplication to help leveling in Path of Exile game. You can create and upl
 
 ## Installation
 
-Download the latest version [Here](https://github.com/Kazte/poe-guides/releases).
+Download the latest version [Here](https://github.com/Kazte/path-of-levelling/releases).
 
 ## Keyboard
 
