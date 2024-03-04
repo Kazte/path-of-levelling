@@ -33,7 +33,11 @@ async fn main() {
             },
             _ => {}
         })
-        .invoke_handler(tauri::generate_handler![get_area_name])
+        .invoke_handler(tauri::generate_handler![
+            get_area_name,
+            check_poe_window,
+            open_poe_window
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -63,4 +67,101 @@ async fn get_area_name(file_location: &str) -> Result<String, String> {
     }
 
     Ok(area_name)
+}
+
+#[tauri::command]
+fn check_poe_window() -> Result<bool, String> {
+    if let Ok(windows) = windows::enumerate_windows() {
+        for window in windows {
+            if window.title.contains("Path of Exile") {
+                return Ok(true);
+            }
+        }
+    }
+
+    Ok(false)
+}
+
+#[tauri::command]
+fn open_poe_window() -> Result<bool, String> {
+    let window_found = if let Ok(windows) = windows::enumerate_windows() {
+        for window in windows {
+            if window.title == "Path of Exile" {
+                if let Err(err) = windows::bring_to_front(window.hwnd) {
+                    eprintln!("Failed to maximize window: {}", err);
+                    return Ok(false);
+                }
+                return Ok(true);
+            }
+        }
+        false
+    } else {
+        false
+    };
+
+    Ok(window_found)
+}
+
+#[cfg(target_os = "windows")]
+mod windows {
+    use std::ffi::OsString;
+    use std::os::windows::ffi::OsStringExt;
+    use winapi;
+    use winapi::shared::minwindef::BOOL;
+    use winapi::shared::minwindef::LPARAM;
+    use winapi::shared::windef::HWND;
+    use winapi::um::winuser::SetForegroundWindow;
+    use winapi::um::winuser::ShowWindow;
+    use winapi::um::winuser::SW_MAXIMIZE;
+    use winapi::um::winuser::{EnumWindows, GetWindowTextW, IsWindowVisible}; // Add this line to import the winapi crate
+
+    // Structure to represent window information
+    #[derive(Debug)]
+    pub struct WindowInfo {
+        pub hwnd: HWND,
+        pub title: String,
+    }
+
+    pub fn enumerate_windows() -> Result<Vec<WindowInfo>, String> {
+        let mut windows = Vec::new();
+        unsafe {
+            EnumWindows(
+                Some(enum_windows_proc),
+                &mut windows as *mut Vec<WindowInfo> as _,
+            );
+        }
+        Ok(windows)
+    }
+
+    unsafe extern "system" fn enum_windows_proc(hwnd: HWND, windows: LPARAM) -> BOOL {
+        let mut buf = [0u16; 512];
+        let len = GetWindowTextW(hwnd, buf.as_mut_ptr(), buf.len() as i32);
+        if len > 0 && IsWindowVisible(hwnd) != 0 {
+            let title = OsString::from_wide(&buf[..len as usize])
+                .into_string()
+                .unwrap();
+            let windows_vec = &mut *(windows as *mut Vec<WindowInfo>);
+            windows_vec.push(WindowInfo { hwnd, title });
+        }
+        1 // Continue enumeration
+    }
+
+    #[allow(dead_code)]
+    pub fn maximize_window(hwnd: HWND) -> Result<(), String> {
+        unsafe {
+            if ShowWindow(hwnd, SW_MAXIMIZE) == 0 {
+                return Err("Failed to maximize window".to_string());
+            }
+        }
+        Ok(())
+    }
+
+    pub fn bring_to_front(hwnd: HWND) -> Result<(), String> {
+        unsafe {
+            if SetForegroundWindow(hwnd) == 0 {
+                return Err("Failed to bring window to front".to_string());
+            }
+        }
+        Ok(())
+    }
 }

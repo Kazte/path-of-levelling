@@ -25,6 +25,7 @@ import {
 import { ISubstep } from './interfaces/guide.interface';
 import useMachine, { IState } from './hooks/useMachine';
 import { listen } from '@tauri-apps/api/event';
+import { BoxSelect } from 'lucide-react';
 
 //#region AppStates
 const appStates: IState[] = [
@@ -73,6 +74,9 @@ const appStates: IState[] = [
           appScanningState: AppScanningState.SCANNING
         });
         // appWindow.hide();
+        invoke('open_poe_window').then((response) => {
+          console.log(response);
+        });
       },
       leave: () => {
         document.body.classList.remove('bg-background/70');
@@ -98,6 +102,10 @@ const appStates: IState[] = [
         document.body.classList.add('border-2');
         document.body.classList.add('border-primary');
         document.body.classList.add('border-dashed');
+
+        invoke('open_poe_window').then((response) => {
+          console.log(response);
+        });
       },
       leave: () => {
         document.body.classList.remove('bg-background/70');
@@ -219,6 +227,7 @@ function App() {
         break;
       case AppState.TEST:
         transition('test');
+
         break;
     }
   }, [appState]);
@@ -233,6 +242,14 @@ function App() {
 
   const handleOnSetPlaceCancel = async () => {
     setAppState(AppState.NORMAL);
+  };
+
+  const handleOnTest = () => {
+    setAppState(AppState.TEST);
+
+    invoke('open_poe_window').then((response) => {
+      console.log(response);
+    });
   };
 
   return (
@@ -287,8 +304,14 @@ function App() {
               <LevellingGuide levellingGuide={guide!} />
             </Switch.Case>
             <Switch.Default>
-              <div className='flex-grow p-2'>
+              <div className='flex-grow p-2 text-center'>
                 <h2>No guide selected</h2>
+                <h3>
+                  If you haven't selected a place for the display click here:
+                </h3>
+                <Button onClick={handleOnTest}>
+                  <BoxSelect size={20} className='mr-2' /> Set Display
+                </Button>
               </div>
             </Switch.Default>
           </Switch>
