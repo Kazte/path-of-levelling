@@ -66,6 +66,17 @@
         "decorations": false,
         "transparent": true
       }
-    ]
+    ],
+    "updater": {
+      "active": true,
+      "endpoints": [
+        "https://gist.githubusercontent.com/Kazte/0570d00d66701b12120cc671eb38d957/raw/9d663a8635445771dc6957ac21d03047206dae91/path-of-levelling-version.json"
+      ],
+      "dialog": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEU5RjgyQTNEQjMyNjJFMTMKUldRVExpYXpQU3I0NmY0SUJIU2tPQlh4T2lCdmtpYTBXRmgyMkxRMldCd0d0WU9jN2Nhc1lUc0IK",
+      "windows": {
+        "installMode": "basicUi"
+      }
+    }
   }
 }
