@@ -6,43 +6,48 @@ on:
 
 jobs:
   publish-tauri:
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-latest, windows-latest]
+        settings:
+          - platform: windows-latest
+            args: "--verbose"
+            target: "windows"
+    runs-on: ${{ matrix.settings.platform }}
 
-    runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Add Rust targets(macOS)
+        if: matrix.settings.target == 'macos-arm'
+        run: rustup target add aarch64-apple-darwin
+
+      - name: Rust setup
+        uses: dtolnay/rust-toolchain@stable
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
 
       - name: setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version-file: '.nvmrc'
+      - name: remove lockfile
+        run: rm yarn.lock
+      - name: install frontend dependencies
+        run: yarn install
 
-      - name: install Rust stable
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-
-      - name: install dependencies (ubuntu only)
-        if: matrix.platform == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
-
-      - name: install app dependencies and build it
-        run: yarn && yarn build
-
-      - uses: tauri-apps/tauri-action@v0
+      - name: Build app
+        uses: tauri-apps/tauri-action@dev
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          args: ${{ matrix.settings.args }}
           tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
-          releaseName: "Blank v__VERSION__"
-          releaseBody: "See the assets to download this version and install."
+          releaseName: v__VERSION__-beta
+          releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: false
-#           releaseBody: 'See the assets to download this version and install.'
-#           releaseDraft: true
-#           prerelease: false
