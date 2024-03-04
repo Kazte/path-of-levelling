@@ -185,7 +185,7 @@ export default function Navbar() {
             <MenubarContent>
               <MenubarItem asChild>
                 <a
-                  href='https://github.com/Kazte/poe-guides'
+                  href='https://github.com/Kazte/path-of-levelling'
                   target='_blank'
                   rel='noreferrer'
                 >
