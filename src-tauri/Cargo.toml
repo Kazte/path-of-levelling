@@ -18,6 +18,7 @@ tauri = { version = "1.5", features = [ "window-hide", "system-tray", "window-st
 serde = { version = "1.0", features = ["derive"] }
 async-fs = "2.1.0"
 serde_json = "1.0"
+winapi = "0.3.9"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
