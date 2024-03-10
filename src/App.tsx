@@ -25,7 +25,11 @@ import {
 import { ISubstep } from './interfaces/guide.interface';
 import useMachine, { IState } from './hooks/useMachine';
 import { listen } from '@tauri-apps/api/event';
-import { BoxSelect } from 'lucide-react';
+import {
+  AlignCenterHorizontal,
+  AlignCenterVertical,
+  BoxSelect
+} from 'lucide-react';
 
 //#region AppStates
 const appStates: IState[] = [
@@ -259,9 +263,17 @@ function App() {
           data-tauri-drag-region
           className='w-full h-full text-center flex flex-col gap-2 justify-center items-center cursor-move'
         >
-          <p className='select-none' data-tauri-drag-region>
+          <p className='select-none text-lg' data-tauri-drag-region>
             Drag to set Positon
           </p>
+          <div className='flex flex-row gap-2'>
+            <Button size='icon' className='size-7'>
+              <AlignCenterHorizontal size={16} />
+            </Button>
+            <Button size='icon' className='size-7'>
+              <AlignCenterVertical size={16} />
+            </Button>
+          </div>
           <div className='flex flex-row gap-2'>
             <Button size='sm' onClick={handleOnSetPlace}>
               Set Place
@@ -304,8 +316,10 @@ function App() {
               <LevellingGuide levellingGuide={guide!} />
             </Switch.Case>
             <Switch.Default>
-              <div className='flex-grow p-2 text-center'>
-                <h2>No guide selected</h2>
+              <div className='flex-grow p-2 text-center flex flex-col justify-center items-center h-full gap-8'>
+                <h2 className='justify-self-stretch underline'>
+                  No guide selected
+                </h2>
                 <h3>
                   If you haven't selected a place for the display click here:
                 </h3>
