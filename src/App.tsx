@@ -28,7 +28,9 @@ import { listen } from '@tauri-apps/api/event';
 import {
   AlignCenterHorizontal,
   AlignCenterVertical,
-  BoxSelect
+  ArrowDownToLine,
+  BoxSelect,
+  PencilRuler
 } from 'lucide-react';
 
 //#region AppStates
@@ -325,6 +327,17 @@ function App() {
                 </h3>
                 <Button onClick={handleOnTest}>
                   <BoxSelect size={20} className='mr-2' /> Set Display
+                </Button>
+
+                <Button asChild>
+                  <a
+                    href='https://heartofphos.github.io/exile-leveling/'
+                    target='_blank'
+                    rel='noreferrer'
+                  >
+                    <PencilRuler size={16} className='mr-2' />
+                    Open Exile Leveling
+                  </a>
                 </Button>
               </div>
             </Switch.Default>
