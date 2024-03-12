@@ -70,7 +70,6 @@
     "updater": {
       "active": true,
       "endpoints": [
-        "http://localhost:4321/api/version?version={{current_version}}&arch={{arch}}&target={{target}}",
         "https://path-of-levelling.vercel.app/api/version?version={{current_version}}&arch={{arch}}&target={{target}}"
       ],
       "dialog": true,
