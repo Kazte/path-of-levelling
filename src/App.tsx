@@ -28,7 +28,6 @@ import { listen } from '@tauri-apps/api/event';
 import {
   AlignCenterHorizontal,
   AlignCenterVertical,
-  ArrowDownToLine,
   BoxSelect,
   PencilRuler
 } from 'lucide-react';
