@@ -31,6 +31,7 @@ import {
   BoxSelect,
   PencilRuler
 } from 'lucide-react';
+import { open } from '@tauri-apps/api/dialog';
 
 //#region AppStates
 const appStates: IState[] = [
@@ -135,11 +136,11 @@ function App() {
     setAddCurrentStep,
     setSubtractCurrentStep
   } = useGuideStore((state) => state);
-  const { setAppState, appScanningState } = useAppStore((state) => state);
+  const { setAppState, appScanningState, clientTxtPath, setClientTxtPath } =
+    useAppStore((state) => state);
   const appState = useAppStore((state) => state.appState);
 
-  const CLIENT_PATH =
-    'C:\\Program Files (x86)\\Grinding Gear Games\\Path of Exile\\logs\\Client.txt';
+  const CLIENT_PATH = clientTxtPath;
 
   useInterval(async () => {
     if (appScanningState === AppScanningState.NOT_SCANNING) return;
@@ -157,6 +158,29 @@ function App() {
   //#region Shortcuts
   useEffect(() => {
     registerShortcuts();
+
+    const clientTxtPath = getLocalStorage('client-txt-path');
+
+    if (clientTxtPath) {
+      setClientTxtPath(clientTxtPath);
+    } else {
+      invoke('check_client_txt', {
+        fileLocation: CLIENT_PATH
+      }).then(async (response) => {
+        if (!response) {
+          const selection = await open({
+            multiple: false,
+            filters: [{ name: 'Text', extensions: ['txt'] }]
+          });
+
+          if (selection) {
+            setClientTxtPath(selection[0]);
+            saveLocalStorage('client-txt-path', selection[0]);
+          }
+        }
+      });
+    }
+
     return () => {
       unregister('CmdOrCtrl+Shift+Alt+F12');
       unregister('CmdOrCtrl+Shift+Alt+PageUp');

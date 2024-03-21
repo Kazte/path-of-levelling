@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "Path of Levelling",
-    "version": "0.0.7"
+    "version": "0.0.6"
   },
   "tauri": {
     "allowlist": {
@@ -40,6 +40,14 @@
         "startDragging": true,
         "minimize": true,
         "hide": true
+      },
+      "dialog": {
+        "all": false,
+        "ask": false,
+        "confirm": false,
+        "message": false,
+        "open": true,
+        "save": false
       }
     },
     "bundle": {
@@ -70,7 +78,7 @@
     "updater": {
       "active": true,
       "endpoints": [
-        "https://path-of-levelling.vercel.app/api/version?version={{current_version}}&arch={{arch}}&target={{target}}"
+        "https://gist.githubusercontent.com/Kazte/d906faf13f5528e054888a5dac8ae399/raw"
       ],
       "dialog": true,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEYwMUQ0MTU2MDgxNzk4RUUKUldUdW1CY0lWa0VkOExtVVFHSXJhdjJaT3pPNERVUUx2UXdaUitsZFRPRllwem9QMWY2d0tjM3YK",

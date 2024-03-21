@@ -35,6 +35,7 @@ async fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             get_area_name,
+            check_client_txt,
             check_poe_window,
             open_poe_window
         ])
@@ -67,6 +68,17 @@ async fn get_area_name(file_location: &str) -> Result<String, String> {
     }
 
     Ok(area_name)
+}
+
+#[tauri::command]
+async fn check_client_txt(file_location: &str) -> Result<bool, String> {
+    let file = async_fs::read_to_string(file_location).await;
+
+    if file.is_err() {
+        return Ok(false);
+    }
+
+    Ok(true)
 }
 
 #[tauri::command]

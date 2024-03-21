@@ -13,4 +13,5 @@ export function removeLocalStorage(key: LocalStorageKey) {
 export type LocalStorageKey =
   | 'guide'
   | 'display-position'
-  | 'last-window-position';
+  | 'last-window-position'
+  | 'client-txt-path';

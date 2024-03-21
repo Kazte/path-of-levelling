@@ -1,6 +1,7 @@
 import {
   BoxSelect,
   Clipboard,
+  FileType,
   Info,
   Minus,
   PencilRuler,
@@ -41,9 +42,10 @@ import {
 import { useState } from 'react';
 import { useGuideStore } from '@/store/guide.store';
 import { Input } from './ui/input';
+import { open } from '@tauri-apps/api/dialog';
 
 export default function Navbar() {
-  const { setAppState } = useAppStore((state) => state);
+  const { setAppState, setClientTxtPath } = useAppStore((state) => state);
   const { guide, setCurrentStep } = useGuideStore((state) => state);
 
   const [openClearDialog, setOpenClearDialog] = useState(false);
@@ -84,6 +86,17 @@ export default function Navbar() {
     if (!clipboardText) return;
 
     setNewGuide(clipboardText);
+  };
+
+  const handleSetClientTxt = async () => {
+    const selection = await open({
+      multiple: false,
+      filters: [{ name: 'Text', extensions: ['txt'] }]
+    });
+
+    if (selection) {
+      setClientTxtPath(selection[0]);
+    }
   };
 
   // const handleOnChangeScanning = () => {
@@ -196,6 +209,9 @@ export default function Navbar() {
               <MenubarSeparator />
               <MenubarItem onClick={handleOnCopyFromClipboard}>
                 <Clipboard size={16} className='mr-2' /> Load from Clipboard
+              </MenubarItem>
+              <MenubarItem onClick={handleSetClientTxt}>
+                <FileType size={16} className='mr-2' /> Set Client.txt
               </MenubarItem>
               <MenubarSub>
                 <MenubarSubTrigger>
