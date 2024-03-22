@@ -267,6 +267,7 @@ export default function Navbar() {
               <MenubarItem
                 // onClick={handleOnClearGuide}
                 onClick={() => setOpenClearDialog(true)}
+                disabled={guide === null}
                 className='data-[highlighted]:bg-destructive'
               >
                 <Trash size={16} className='mr-2' /> Clear Guide
