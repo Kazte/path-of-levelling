@@ -1,6 +1,8 @@
-<h1 align='center'>Path of Levelling</h1>
+![alt text](/.github/images/banner.png)
 
 [![Publish Release](https://github.com/Kazte/path-of-levelling/actions/workflows/main.yml/badge.svg)](https://github.com/Kazte/path-of-levelling/actions/workflows/main.yml)
+
+<h2>Index</h2>
 
 - [Introduction](#introduction)
 - [Features](#features)
