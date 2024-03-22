@@ -39,10 +39,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from './ui/alert-dialog';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useGuideStore } from '@/store/guide.store';
 import { Input } from './ui/input';
 import { open } from '@tauri-apps/api/dialog';
+import { getVersion } from '@tauri-apps/api/app';
 
 export default function Navbar() {
   const { setAppState, setClientTxtPath } = useAppStore((state) => state);
@@ -51,8 +52,15 @@ export default function Navbar() {
   const [openClearDialog, setOpenClearDialog] = useState(false);
   const [openOverrideDialog, setOpenOverrideDialog] = useState(false);
   const [openGotoStepDialog, setOpenGotoStepDialog] = useState(false);
+  const [appVersion, setAppVersion] = useState<string | null>();
 
   const [gotoStep, setGotoStep] = useState(0);
+
+  useEffect(() => {
+    getVersion().then((version) => {
+      setAppVersion(version);
+    });
+  }, []);
 
   const handleOnMinize = () => {
     appWindow.minimize();
@@ -285,6 +293,12 @@ export default function Navbar() {
               </MenubarItem>
             </MenubarContent>
           </MenubarMenu>
+          <span
+            className='text-sm opacity-40 select-none'
+            data-tauri-drag-region
+          >
+            v{appVersion}
+          </span>
         </div>
         <div className='flex flex-row gap-2 justify-center items-center'>
           <Button

@@ -23,6 +23,9 @@
         "readFile": true,
         "scope": ["**/*"]
       },
+      "app": {
+        "all": true
+      },
       "clipboard": {
         "all": false,
         "readText": true
