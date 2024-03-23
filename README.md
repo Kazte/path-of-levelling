@@ -32,7 +32,7 @@ This a aplication to help leveling in Path of Exile game. You can create and upl
 
    ![Guide_02](/.github/images/image-1.png)
 
-5. Go to the menu and click Paste from Clipboard.
+5. Go to the menu and click _Load from Clipboard_.
 
 ![Guide_03](/.github/images/image-2.png)
 
