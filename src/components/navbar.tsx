@@ -200,7 +200,7 @@ export default function Navbar() {
                 className='select-none w-5 h-5'
                 data-tauri-drag-region
               />
-              PoE Guides
+              Path of Levelling
             </MenubarTrigger>
 
             <MenubarContent>
@@ -211,7 +211,7 @@ export default function Navbar() {
                   rel='noreferrer'
                 >
                   <Info size={16} className='mr-2' />
-                  About PoE Guides
+                  About Path of Levelling
                 </a>
               </MenubarItem>
               <MenubarSeparator />
@@ -272,7 +272,6 @@ export default function Navbar() {
               >
                 <Trash size={16} className='mr-2' /> Clear Guide
               </MenubarItem>
-
               <MenubarSeparator />
               <MenubarItem asChild>
                 <a
@@ -295,10 +294,10 @@ export default function Navbar() {
             </MenubarContent>
           </MenubarMenu>
           <span
-            className='text-sm opacity-40 select-none'
+            className='text-[0.6rem] opacity-45 select-none self-end justify-self-start'
             data-tauri-drag-region
           >
-            v{appVersion}
+            Version {appVersion}
           </span>
         </div>
         <div className='flex flex-row gap-2 justify-center items-center'>
