@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "Path of Levelling",
-    "version": "0.1.0"
+    "version": "0.1.1"
   },
   "tauri": {
     "allowlist": {
@@ -81,6 +81,7 @@
     "updater": {
       "active": true,
       "endpoints": [
+        "https://path-of-levelling.vercel.app/api/version?version={{current_version}}&arch={{arch}}&target={{target}}",
         "https://gist.githubusercontent.com/Kazte/d906faf13f5528e054888a5dac8ae399/raw"
       ],
       "dialog": true,
