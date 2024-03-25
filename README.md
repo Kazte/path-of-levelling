@@ -26,6 +26,9 @@ This a aplication to help leveling in Path of Exile game. You can create and upl
 1. Download the latest version [Here](https://github.com/Kazte/path-of-levelling/releases).
 2. Select Client.txt file in Path of Exile folder. Default: `C:\Program Files (x86)\Grinding Gear Games\Path of Exile\logs\Client.txt`.
 3. Set the place for InGame Steps window.
+
+![Guide_02](/.github/images/image-03.png)
+
 4. Import your build from **[Exile Leveling](https://heartofphos.github.io/exile-leveling/)** page.
    ![Guide_01](/.github/images/image.png)
 
