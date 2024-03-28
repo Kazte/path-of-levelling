@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "Path of Levelling",
-    "version": "0.1.2"
+    "version": "0.1.3"
   },
   "tauri": {
     "allowlist": {
@@ -42,7 +42,8 @@
         "setAlwaysOnTop": true,
         "startDragging": true,
         "minimize": true,
-        "hide": true
+        "hide": true,
+        "setSkipTaskbar": true
       },
       "dialog": {
         "all": false,
@@ -81,6 +82,7 @@
     "updater": {
       "active": true,
       "endpoints": [
+        "https://github.com/kazte/path-of-levelling/releases/latest/download/latest.json",
         "https://path-of-levelling.vercel.app/api/version?version={{current_version}}&arch={{arch}}&target={{target}}",
         "https://gist.githubusercontent.com/Kazte/d906faf13f5528e054888a5dac8ae399/raw"
       ],
