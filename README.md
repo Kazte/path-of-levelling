@@ -8,7 +8,9 @@
 - [Features](#features)
 - [Installation](#installation)
 - [Keyboard](#keyboard)
+- [Contributors](#contributors)
 - [License](#license)
+
 
 ## Introduction
 
@@ -46,6 +48,11 @@ This a aplication to help leveling in Path of Exile game. You can create and upl
 - `Ctrl + Shift + Alt + F12` - Deactivate in game overlay.
 - `Ctrl + Shift + Alt + →` - Next step.
 - `Ctrl + Shift + Alt + ←` - Previous step.
+
+## Contributors
+
+[![Contributors](https://contrib.rocks/image?repo=kazte/path-of-levelling)](https://github.com/kazte/path-of-levelling/graphs/contributors)
+
 
 ## License
 
