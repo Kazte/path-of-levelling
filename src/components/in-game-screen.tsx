@@ -10,7 +10,7 @@ export default function InGameScreen() {
         {guide !== null && currentStep !== null && (
           <>
             <p className='text-sm opacity-50 underline absolute top-1 left-1'>
-              Step: {currentStep}
+              Step: {currentStep + 1}
             </p>
             {guide[currentStep].subSteps.map(
               (subStep: ISubstep, index: number) => (
