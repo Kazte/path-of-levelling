@@ -1,13 +1,14 @@
+import { AppScanningState, useAppStore } from '@/store/app.store';
+import {
+  LogicalPosition,
+  LogicalSize,
+  appWindow,
+  availableMonitors
+} from '@tauri-apps/api/window';
+
 import { IState } from '@/hooks/useMachine';
-import { useAppStore, AppScanningState } from '@/store/app.store';
 import { getLocalStorage } from '@/utilities/save-localstorage';
 import { invoke } from '@tauri-apps/api';
-import {
-  availableMonitors,
-  appWindow,
-  LogicalPosition,
-  LogicalSize
-} from '@tauri-apps/api/window';
 
 const appStates: IState[] = [
   {
@@ -38,17 +39,18 @@ const appStates: IState[] = [
   {
     name: 'in-game',
     on: {
-      enter: () => {
+      enter: async () => {
         const { x: displayPositionX, y: displayPositionY } = JSON.parse(
           getLocalStorage('display-position') || '{"x": 0, "y": 0}'
         );
 
-        appWindow.setPosition(
+        await appWindow.setPosition(
           new LogicalPosition(displayPositionX, displayPositionY)
         );
-        appWindow.setSize(new LogicalSize(480, 120));
-        appWindow.setAlwaysOnTop(true);
-        appWindow.setIgnoreCursorEvents(true);
+        await appWindow.setSize(new LogicalSize(480, 120));
+        await appWindow.setAlwaysOnTop(true);
+        await appWindow.setIgnoreCursorEvents(true);
+        await appWindow.setSkipTaskbar(true);
         document.body.classList.add('bg-background/70');
 
         useAppStore.setState({
@@ -59,26 +61,28 @@ const appStates: IState[] = [
           console.log(response);
         });
       },
-      leave: () => {
+      leave: async () => {
         document.body.classList.remove('bg-background/70');
+        await appWindow.setSkipTaskbar(false);
       }
     }
   },
   {
     name: 'test',
     on: {
-      enter: () => {
+      enter: async () => {
         const { x: displayPositionX, y: displayPositionY } = JSON.parse(
           getLocalStorage('display-position') || '{"x": 0, "y": 0}'
         );
 
-        appWindow.setPosition(
+        await appWindow.setPosition(
           new LogicalPosition(displayPositionX, displayPositionY)
         );
 
-        appWindow.setSize(new LogicalSize(480, 120));
-        appWindow.setAlwaysOnTop(true);
-        appWindow.setIgnoreCursorEvents(false);
+        await appWindow.setSize(new LogicalSize(480, 120));
+        await appWindow.setAlwaysOnTop(true);
+        await appWindow.setIgnoreCursorEvents(false);
+        await appWindow.setSkipTaskbar(true);
         document.body.classList.add('bg-background/70');
         document.body.classList.add('border-2');
         document.body.classList.add('border-primary');
@@ -88,11 +92,12 @@ const appStates: IState[] = [
           console.log(response);
         });
       },
-      leave: () => {
+      leave: async () => {
         document.body.classList.remove('bg-background/70');
         document.body.classList.remove('border-2');
         document.body.classList.remove('border-primary');
         document.body.classList.remove('border-dashed');
+        await appWindow.setSkipTaskbar(false);
       }
     }
   }
