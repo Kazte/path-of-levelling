@@ -1,35 +1,4 @@
 import {
-  BoxSelect,
-  Clipboard,
-  FileType,
-  Info,
-  Minus,
-  PencilRuler,
-  Play,
-  StepForward,
-  Trash,
-  Wrench,
-  X
-} from 'lucide-react';
-import { appWindow } from '@tauri-apps/api/window';
-import {
-  Menubar,
-  MenubarMenu,
-  MenubarTrigger,
-  MenubarContent,
-  MenubarItem,
-  MenubarSeparator,
-  MenubarSub,
-  MenubarSubTrigger,
-  MenubarSubContent
-} from './ui/menubar';
-import { Button } from './ui/button';
-import { readText } from '@tauri-apps/api/clipboard';
-import { clearGuide, setNewGuide } from '@/utilities/guide.utilities';
-import { cn } from '@/lib/utils';
-import { AppState, useAppStore } from '@/store/app.store';
-import logo from '@/assets/icon.ico';
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -39,14 +8,48 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from './ui/alert-dialog';
+import { AppState, useAppStore } from '@/store/app.store';
+import {
+  BoxSelect,
+  Clipboard,
+  FileType,
+  Info,
+  Minus,
+  PencilRuler,
+  Play,
+  Settings,
+  StepForward,
+  Trash,
+  Wrench,
+  X
+} from 'lucide-react';
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
+  MenubarTrigger
+} from './ui/menubar';
+import { clearGuide, setNewGuide } from '@/utilities/guide.utilities';
 import { useEffect, useState } from 'react';
-import { useGuideStore } from '@/store/guide.store';
+
+import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { open } from '@tauri-apps/api/dialog';
+import { appWindow } from '@tauri-apps/api/window';
+import { cn } from '@/lib/utils';
 import { getVersion } from '@tauri-apps/api/app';
+import logo from '@/assets/icon.ico';
+import { readText } from '@tauri-apps/api/clipboard';
+import { useGuideStore } from '@/store/guide.store';
+import { useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
-  const { setAppState, setClientTxtPath } = useAppStore((state) => state);
+  const navigator = useNavigate();
+  const { setAppState } = useAppStore((state) => state);
   const { guide, setCurrentStep } = useGuideStore((state) => state);
 
   const [openClearDialog, setOpenClearDialog] = useState(false);
@@ -94,17 +97,6 @@ export default function Navbar() {
     if (!clipboardText) return;
 
     setNewGuide(clipboardText);
-  };
-
-  const handleSetClientTxt = async () => {
-    const selection = await open({
-      multiple: false,
-      filters: [{ name: 'Text', extensions: ['txt'] }]
-    });
-
-    if (selection) {
-      setClientTxtPath(selection[0]);
-    }
   };
 
   // const handleOnChangeScanning = () => {
@@ -218,9 +210,6 @@ export default function Navbar() {
               <MenubarItem onClick={handleOnCopyFromClipboard}>
                 <Clipboard size={16} className='mr-2' /> Load from Clipboard
               </MenubarItem>
-              <MenubarItem onClick={handleSetClientTxt}>
-                <FileType size={16} className='mr-2' /> Set Client.txt
-              </MenubarItem>
               <MenubarSub>
                 <MenubarSubTrigger>
                   <Wrench size={16} className='mr-2' />
@@ -285,6 +274,15 @@ export default function Navbar() {
               </MenubarItem>
               <MenubarSeparator />
               <MenubarItem
+                onClick={() => {
+                  navigator('/settings');
+                }}
+              >
+                <Settings size={16} className='mr-2' />
+                Settings
+              </MenubarItem>
+              <MenubarSeparator />
+              <MenubarItem
                 onClick={handleOnClose}
                 className='data-[highlighted]:bg-destructive'
               >
@@ -305,7 +303,7 @@ export default function Navbar() {
             variant='secondary'
             onClick={handleOnStart}
             className={cn(
-              'w-fit h-fit py-[2px] px-[4px]',
+              'h-6 w-20',
               'bg-green-700 text-foreground hover:bg-opacity-70 hover:bg-green-700'
             )}
             size='icon'
@@ -317,7 +315,7 @@ export default function Navbar() {
 
           <Button
             variant='secondary'
-            className='h-1/2 w-1/2'
+            className='h-6 w-6'
             size='icon'
             onClick={handleOnMinize}
           >
@@ -325,7 +323,7 @@ export default function Navbar() {
           </Button>
           <Button
             variant='destructive'
-            className='h-1/2 w-1/2'
+            className='h-6 w-6'
             size='icon'
             onClick={handleOnClose}
           >

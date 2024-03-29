@@ -1,9 +1,5 @@
 import { AppScanningState, AppState, useAppStore } from '@/store/app.store';
 import {
-  getLocalStorage,
-  saveLocalStorage
-} from '@/utilities/save-localstorage';
-import {
   isRegistered,
   register,
   unregister
@@ -16,17 +12,14 @@ import MainScreen from '@/components/main-screen';
 import Navbar from '@/components/navbar';
 import { Switch } from 'ktools-r';
 import TestScreen from '@/components/test-screen';
-import appStates from '@/states/app.state';
 import { invoke } from '@tauri-apps/api';
 import { listen } from '@tauri-apps/api/event';
-import { open } from '@tauri-apps/api/dialog';
 import { useGuideStore } from '@/store/guide.store';
 import { useInterval } from '@/hooks/useInterval';
-import useMachine from '@/hooks/useMachine';
+import { useSettingsStore } from '@/store/settings.store';
 
-export default function App() {
+export default function MainPage() {
   const [areaName, setAreaName] = useState<string>();
-  const { transition } = useMachine(appStates, 'normal');
 
   const {
     guide,
@@ -35,9 +28,9 @@ export default function App() {
     setAddCurrentStep,
     setSubtractCurrentStep
   } = useGuideStore((state) => state);
-  const { setAppState, appScanningState, clientTxtPath, setClientTxtPath } =
-    useAppStore((state) => state);
+  const { setAppState, appScanningState } = useAppStore((state) => state);
   const appState = useAppStore((state) => state.appState);
+  const { clientTxtPath } = useSettingsStore((state) => state);
 
   const CLIENT_PATH = clientTxtPath;
 
@@ -57,28 +50,6 @@ export default function App() {
   //#region Shortcuts
   useEffect(() => {
     registerShortcuts();
-
-    const clientTxtPath = getLocalStorage('client-txt-path');
-
-    if (clientTxtPath) {
-      setClientTxtPath(clientTxtPath);
-    } else {
-      invoke('check_client_txt', {
-        fileLocation: CLIENT_PATH
-      }).then(async (response) => {
-        if (!response) {
-          const selection = await open({
-            multiple: false,
-            filters: [{ name: 'Text', extensions: ['txt'] }]
-          });
-
-          if (selection) {
-            setClientTxtPath(selection[0]);
-            saveLocalStorage('client-txt-path', selection[0]);
-          }
-        }
-      });
-    }
 
     return () => {
       unregister('CmdOrCtrl+Shift+Alt+F12');
@@ -144,21 +115,6 @@ export default function App() {
       }
     }
   }, [currentStep]);
-
-  useEffect(() => {
-    switch (appState) {
-      case AppState.NORMAL:
-        transition('normal');
-        break;
-      case AppState.IN_GAME:
-        transition('in-game');
-        break;
-      case AppState.TEST:
-        transition('test');
-
-        break;
-    }
-  }, [appState]);
 
   return (
     <Switch>

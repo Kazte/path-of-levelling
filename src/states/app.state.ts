@@ -7,8 +7,9 @@ import {
 } from '@tauri-apps/api/window';
 
 import { IState } from '@/hooks/useMachine';
-import { getLocalStorage } from '@/utilities/save-localstorage';
 import { invoke } from '@tauri-apps/api';
+import router from '@/utilities/router';
+import { useSettingsStore } from '@/store/settings.store';
 
 const appStates: IState[] = [
   {
@@ -40,12 +41,10 @@ const appStates: IState[] = [
     name: 'in-game',
     on: {
       enter: async () => {
-        const { x: displayPositionX, y: displayPositionY } = JSON.parse(
-          getLocalStorage('display-position') || '{"x": 0, "y": 0}'
-        );
+        const { displayPosition } = useSettingsStore.getState();
 
         await appWindow.setPosition(
-          new LogicalPosition(displayPositionX, displayPositionY)
+          new LogicalPosition(displayPosition.x, displayPosition.y)
         );
         await appWindow.setSize(new LogicalSize(480, 120));
         await appWindow.setAlwaysOnTop(true);
@@ -71,12 +70,14 @@ const appStates: IState[] = [
     name: 'test',
     on: {
       enter: async () => {
-        const { x: displayPositionX, y: displayPositionY } = JSON.parse(
-          getLocalStorage('display-position') || '{"x": 0, "y": 0}'
-        );
+        router.navigate('/');
+
+        console.log('test');
+
+        const { displayPosition } = useSettingsStore.getState();
 
         await appWindow.setPosition(
-          new LogicalPosition(displayPositionX, displayPositionY)
+          new LogicalPosition(displayPosition.x, displayPosition.y)
         );
 
         await appWindow.setSize(new LogicalSize(480, 120));

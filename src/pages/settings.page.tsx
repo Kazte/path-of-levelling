@@ -1,5 +1,7 @@
+import { AppState, useAppStore } from '@/store/app.store';
+import { BoxSelect, Check, File } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
-import { Check } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Menubar } from '@/components/ui/menubar';
@@ -10,6 +12,7 @@ import { useState } from 'react';
 
 export default function SettingsPage() {
   const navigator = useNavigate();
+  const { setAppState } = useAppStore((state) => state);
   const { clientTxtPath, setClientTxtPath } = useSettingsStore(
     (state) => state
   );
@@ -30,6 +33,10 @@ export default function SettingsPage() {
       setClientTxtPath(selection as string);
       setClientTxtPathValue(selection as string);
     }
+  };
+
+  const handleOnTest = () => {
+    setAppState(AppState.TEST);
   };
 
   return (
@@ -60,7 +67,15 @@ export default function SettingsPage() {
                 onBlur={() => setClientTxtPath(clientTxtPathValue)}
               />
               <Button type='button' onClick={handleSetClientTxt}>
-                Find File
+                <File /> Find File
+              </Button>
+            </div>
+          </div>
+          <div className='flex flex-col gap-1'>
+            <Label>Display Postiion</Label>
+            <div className='flex w-full max-w-sm items-center space-x-2'>
+              <Button type='button' onClick={handleOnTest}>
+                <BoxSelect /> Set Position
               </Button>
             </div>
           </div>

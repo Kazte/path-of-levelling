@@ -1,20 +1,22 @@
 import { AlignCenterHorizontal, AlignCenterVertical } from 'lucide-react';
-import { Button } from './ui/button';
 import { AppState, useAppStore } from '@/store/app.store';
-import { saveLocalStorage } from '@/utilities/save-localstorage';
 import {
+  LogicalPosition,
   appWindow,
-  availableMonitors,
-  LogicalPosition
+  availableMonitors
 } from '@tauri-apps/api/window';
+
+import { Button } from './ui/button';
+import { useSettingsStore } from '@/store/settings.store';
 
 export default function TestScreen() {
   const { setAppState } = useAppStore((state) => state);
+  const { setDisplayPosition } = useSettingsStore((state) => state);
 
   const handleOnSetPlace = async () => {
     const { x, y } = await appWindow.innerPosition();
 
-    saveLocalStorage('display-position', JSON.stringify({ x, y }));
+    setDisplayPosition({ x, y });
 
     setAppState(AppState.NORMAL);
   };

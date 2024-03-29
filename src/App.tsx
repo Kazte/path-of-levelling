@@ -1,17 +1,31 @@
-import { HashRouter, Route, Routes } from 'react-router-dom';
+import { AppState, useAppStore } from './store/app.store';
 
-import MainPage from './pages/main.page';
-import SettingsPage from './pages/settings.page';
+import { RouterProvider } from 'react-router-dom';
+import appStates from './states/app.state';
+import router from './utilities/router';
+import { useEffect } from 'react';
+import useMachine from './hooks/useMachine';
 
 function App() {
-  return (
-    <HashRouter>
-      <Routes>
-        <Route path='/' element={<MainPage />} />
-        <Route path='/settings' element={<SettingsPage />} />
-      </Routes>
-    </HashRouter>
-  );
+  const { transition } = useMachine(appStates, 'normal');
+  const appState = useAppStore((state) => state.appState);
+
+  useEffect(() => {
+    switch (appState) {
+      case AppState.NORMAL:
+        transition('normal');
+        break;
+      case AppState.IN_GAME:
+        transition('in-game');
+        break;
+      case AppState.TEST:
+        transition('test');
+
+        break;
+    }
+  }, [appState]);
+
+  return <RouterProvider router={router} />;
 }
 
 export default App;
