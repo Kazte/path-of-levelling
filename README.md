@@ -8,9 +8,9 @@
 - [Features](#features)
 - [Installation](#installation)
 - [Keyboard](#keyboard)
+- [Screenshots](#screenshots)
 - [Contributors](#contributors)
 - [License](#license)
-
 
 ## Introduction
 
@@ -49,10 +49,14 @@ This a aplication to help leveling in Path of Exile game. You can create and upl
 - `Ctrl + Shift + Alt + →` - Next step.
 - `Ctrl + Shift + Alt + ←` - Previous step.
 
+## Screenshots
+
+In Game View:
+![In game View](/.github/images/image-04.png)
+
 ## Contributors
 
 [![Contributors](https://contrib.rocks/image?repo=kazte/path-of-levelling)](https://github.com/kazte/path-of-levelling/graphs/contributors)
-
 
 ## License
 
