@@ -26,7 +26,8 @@ export default function MainPage() {
     currentStep,
     setCurrentStep,
     setAddCurrentStep,
-    setSubtractCurrentStep
+    setSubtractCurrentStep,
+    setCurrentArea
   } = useGuideStore((state) => state);
   const { setAppState, appScanningState } = useAppStore((state) => state);
   const appState = useAppStore((state) => state.appState);
@@ -98,6 +99,8 @@ export default function MainPage() {
 
   useEffect(() => {
     if (guide === null || currentStep === null) return;
+
+    setCurrentArea(areaName || '');
 
     // if (appState === AppState.IN_GAME) {
     if (areaName === guide[currentStep].changeAreaId) {

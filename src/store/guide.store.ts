@@ -5,6 +5,7 @@ import { persist } from 'zustand/middleware';
 interface States {
   guide: IGuide | null;
   currentStep: number;
+  currentArea: string;
 }
 
 interface Actions {
@@ -12,6 +13,7 @@ interface Actions {
   setCurrentStep: (step: number) => void;
   setAddCurrentStep: () => void;
   setSubtractCurrentStep: () => void;
+  setCurrentArea: (area: string) => void;
 }
 
 export const useGuideStore = create<States & Actions>()(
@@ -20,6 +22,7 @@ export const useGuideStore = create<States & Actions>()(
       return {
         guide: null,
         currentStep: 0,
+        currentArea: '',
         setGuide: (guide) => set({ guide }),
         setCurrentStep: (currentStep) =>
           set((state) => {
@@ -49,7 +52,8 @@ export const useGuideStore = create<States & Actions>()(
         setSubtractCurrentStep: () =>
           set((state) => ({
             currentStep: state.currentStep === 0 ? 0 : state.currentStep - 1
-          }))
+          })),
+        setCurrentArea: (currentArea) => set({ currentArea })
       };
     },
     {

@@ -28,6 +28,8 @@ const appStates: IState[] = [
         );
 
         appWindow.setSize(new LogicalSize(800, 600));
+        console.log('lemao');
+
         appWindow.setAlwaysOnTop(false);
         appWindow.setIgnoreCursorEvents(false);
 
@@ -43,6 +45,8 @@ const appStates: IState[] = [
     on: {
       enter: async () => {
         const { displayPosition } = useSettingsStore.getState();
+        const monitors = await availableMonitors();
+        const monitorSize = monitors[0].size;
 
         await appWindow.setPosition(
           new LogicalPosition(displayPosition.x, displayPosition.y)
@@ -66,7 +70,13 @@ const appStates: IState[] = [
         if (isCreatedLayoutWindow) {
           const layoutWindow = WebviewWindow.getByLabel('layout-map');
 
-          layoutWindow?.setSize(new LogicalSize(100, 100));
+          layoutWindow?.setSize(new LogicalSize(424 / 3, 230 / 3));
+          layoutWindow?.setPosition(
+            new LogicalPosition(0, monitorSize.height / 2)
+          );
+          await layoutWindow?.setAlwaysOnTop(true);
+          await layoutWindow?.setIgnoreCursorEvents(true);
+          await layoutWindow?.setSkipTaskbar(true);
         }
       },
       leave: async () => {
