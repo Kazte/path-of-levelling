@@ -37,7 +37,9 @@ async fn main() {
             get_area_name,
             check_client_txt,
             check_poe_window,
-            open_poe_window
+            open_poe_window,
+            open_layout_window,
+            close_layout_window
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -176,4 +178,35 @@ mod windows {
         }
         Ok(())
     }
+}
+
+#[tauri::command]
+async fn open_layout_window(handle: tauri::AppHandle) -> Result<bool, String> {
+    let layout_map_window = tauri::WindowBuilder::new(
+        &handle,
+        "layout-map", /* the unique window label */
+        tauri::WindowUrl::App("index.html/#/layoutmap".parse().unwrap()),
+    )
+    .build();
+
+    if layout_map_window.is_err() {
+        return Ok(false);
+    }
+
+    let layout_map_window = layout_map_window.unwrap();
+
+    layout_map_window.set_resizable(false).unwrap();
+    layout_map_window.set_decorations(false).unwrap();
+    layout_map_window.set_always_on_top(true).unwrap();
+    layout_map_window.set_skip_taskbar(true).unwrap();
+    // layout_map_window.set_ignore_cursor_events(true).unwrap();
+
+    Ok(true)
+}
+
+#[tauri::command]
+fn close_layout_window(handle: tauri::AppHandle) {
+    let layout_map_window = handle.get_window("layout-map").unwrap();
+
+    layout_map_window.close().unwrap();
 }

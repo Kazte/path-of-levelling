@@ -2,6 +2,7 @@ import { AppScanningState, useAppStore } from '@/store/app.store';
 import {
   LogicalPosition,
   LogicalSize,
+  WebviewWindow,
   appWindow,
   availableMonitors
 } from '@tauri-apps/api/window';
@@ -55,14 +56,24 @@ const appStates: IState[] = [
         useAppStore.setState({
           appScanningState: AppScanningState.SCANNING
         });
-        // appWindow.hide();
+
         invoke('open_poe_window').then((response) => {
           console.log(response);
         });
+
+        const isCreatedLayoutWindow = await invoke('open_layout_window');
+
+        if (isCreatedLayoutWindow) {
+          const layoutWindow = WebviewWindow.getByLabel('layout-map');
+
+          layoutWindow?.setSize(new LogicalSize(100, 100));
+        }
       },
       leave: async () => {
         document.body.classList.remove('bg-background/70');
         await appWindow.setSkipTaskbar(false);
+
+        await invoke('close_layout_window');
       }
     }
   },
