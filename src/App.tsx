@@ -7,7 +7,7 @@ function App() {
   return (
     <HashRouter>
       <Routes>
-        <Route path='/' element={<MainRoutes />} />
+        <Route path='/*' element={<MainRoutes />} />
 
         <Route path='/layoutmap' element={<LayoutMapPage />} />
         <Route path='*' element={<h1>404 Not Found</h1>} />

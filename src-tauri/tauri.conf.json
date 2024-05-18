@@ -48,7 +48,11 @@
         "minimize": true,
         "hide": true,
         "show": true,
-        "setSkipTaskbar": true
+        "setSkipTaskbar": true,
+        "maximize": true,
+        "setResizable": true,
+        "setFocus": true,
+        "create": true
       },
       "dialog": {
         "all": false,

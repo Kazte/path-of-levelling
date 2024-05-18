@@ -195,11 +195,14 @@ async fn open_layout_window(handle: tauri::AppHandle) -> Result<bool, String> {
 
     let layout_map_window = layout_map_window.unwrap();
 
-    layout_map_window.set_resizable(false).unwrap();
-    layout_map_window.set_decorations(false).unwrap();
-    layout_map_window.set_always_on_top(true).unwrap();
-    layout_map_window.set_skip_taskbar(true).unwrap();
+    // layout_map_window.set_resizable(false).unwrap();
+    // layout_map_window.set_decorations(false).unwrap();
+    // layout_map_window.set_always_on_top(true).unwrap();
+    // layout_map_window.set_skip_taskbar(true).unwrap();
     // layout_map_window.set_ignore_cursor_events(true).unwrap();
+    layout_map_window.show().unwrap();
+    // layout_map_window.unminimize().unwrap();
+    // layout_map_window.open_devtools();
 
     Ok(true)
 }
