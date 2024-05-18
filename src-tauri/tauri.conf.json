@@ -21,7 +21,8 @@
         "all": false,
         "exists": true,
         "readFile": true,
-        "scope": ["**/*"]
+        "readDir": true,
+        "scope": ["**/*", "$RESOURCE/*", "**"]
       },
       "app": {
         "all": true
@@ -31,6 +32,9 @@
         "readText": true
       },
       "globalShortcut": {
+        "all": true
+      },
+      "path": {
         "all": true
       },
       "window": {
@@ -43,7 +47,12 @@
         "startDragging": true,
         "minimize": true,
         "hide": true,
-        "setSkipTaskbar": true
+        "show": true,
+        "setSkipTaskbar": true,
+        "maximize": true,
+        "setResizable": true,
+        "setFocus": true,
+        "create": true
       },
       "dialog": {
         "all": false,
@@ -52,13 +61,18 @@
         "message": false,
         "open": true,
         "save": false
+      },
+      "protocol": {
+        "asset": true,
+        "assetScope": ["**"]
       }
     },
     "bundle": {
       "active": true,
       "targets": ["msi", "updater"],
       "identifier": "com.path-of-levelling.dev",
-      "icon": ["icons/32x32.png", "icons/128x128.png", "icons/icon.ico"]
+      "icon": ["icons/32x32.png", "icons/128x128.png", "icons/icon.ico"],
+      "resources": ["resources/*"]
     },
     "security": {
       "csp": null

@@ -1,31 +1,19 @@
-import { AppState, useAppStore } from './store/app.store';
+import { HashRouter, Route, Routes } from 'react-router-dom';
 
-import { RouterProvider } from 'react-router-dom';
-import appStates from './states/app.state';
-import router from './utilities/router';
-import { useEffect } from 'react';
-import useMachine from './hooks/useMachine';
+import LayoutMapPage from './pages/layout-map.page';
+import MainRoutes from './pages/main-routes';
 
 function App() {
-  const { transition } = useMachine(appStates, 'normal');
-  const appState = useAppStore((state) => state.appState);
+  return (
+    <HashRouter>
+      <Routes>
+        <Route path='/*' element={<MainRoutes />} />
 
-  useEffect(() => {
-    switch (appState) {
-      case AppState.NORMAL:
-        transition('normal');
-        break;
-      case AppState.IN_GAME:
-        transition('in-game');
-        break;
-      case AppState.TEST:
-        transition('test');
-
-        break;
-    }
-  }, [appState]);
-
-  return <RouterProvider router={router} />;
+        <Route path='/layoutmap' element={<LayoutMapPage />} />
+        <Route path='*' element={<h1>404 Not Found</h1>} />
+      </Routes>
+    </HashRouter>
+  );
 }
 
 export default App;

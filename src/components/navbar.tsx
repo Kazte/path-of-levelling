@@ -12,7 +12,6 @@ import { AppState, useAppStore } from '@/store/app.store';
 import {
   BoxSelect,
   Clipboard,
-  FileType,
   Info,
   Minus,
   PencilRuler,

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Menubar } from '@/components/ui/menubar';
+import { Switch } from '@/components/ui/switch';
 import { open } from '@tauri-apps/api/dialog';
 import { useNavigate } from 'react-router-dom';
 import { useSettingsStore } from '@/store/settings.store';
@@ -13,11 +14,11 @@ import { useState } from 'react';
 export default function SettingsPage() {
   const navigator = useNavigate();
   const { setAppState } = useAppStore((state) => state);
-  const { clientTxtPath, setClientTxtPath } = useSettingsStore(
-    (state) => state
-  );
+  const settingStore = useSettingsStore((state) => state);
 
-  const [clientTxtPathValue, setClientTxtPathValue] = useState(clientTxtPath);
+  const [clientTxtPathValue, setClientTxtPathValue] = useState(
+    settingStore.clientTxtPath
+  );
 
   const handleOnClose = () => {
     navigator('/');
@@ -30,7 +31,7 @@ export default function SettingsPage() {
     });
 
     if (selection) {
-      setClientTxtPath(selection as string);
+      settingStore.setClientTxtPath(selection as string);
       setClientTxtPathValue(selection as string);
     }
   };
@@ -64,7 +65,7 @@ export default function SettingsPage() {
                 placeholder='Client.txt path'
                 value={clientTxtPathValue}
                 onChange={(e) => setClientTxtPathValue(e.target.value)}
-                onBlur={() => setClientTxtPath(clientTxtPathValue)}
+                onBlur={() => settingStore.setClientTxtPath(clientTxtPathValue)}
               />
               <Button type='button' onClick={handleSetClientTxt}>
                 <File /> Find File
@@ -77,6 +78,18 @@ export default function SettingsPage() {
               <Button type='button' onClick={handleOnTest}>
                 <BoxSelect /> Set Position
               </Button>
+            </div>
+          </div>
+          <div className='flex flex-col gap-1'>
+            <Label>Show Map Layout</Label>
+            <div className='flex w-full max-w-sm items-center space-x-2'>
+              <Switch
+                title='Show Map Layout'
+                defaultChecked={settingStore.showLayout}
+                onCheckedChange={(set) => {
+                  settingStore.setShowLayout(set);
+                }}
+              />
             </div>
           </div>
         </section>

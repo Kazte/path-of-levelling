@@ -2,6 +2,7 @@ import { AppScanningState, useAppStore } from '@/store/app.store';
 import {
   LogicalPosition,
   LogicalSize,
+  WebviewWindow,
   appWindow,
   availableMonitors
 } from '@tauri-apps/api/window';
@@ -16,17 +17,8 @@ const appStates: IState[] = [
     name: 'normal',
     on: {
       enter: async () => {
-        const monitors = await availableMonitors();
-        const monitorSize = monitors[0].size;
-
-        appWindow.setPosition(
-          new LogicalPosition(
-            monitorSize.width / 2 - 400,
-            monitorSize.height / 2 - 300
-          )
-        );
-
         appWindow.setSize(new LogicalSize(800, 600));
+
         appWindow.setAlwaysOnTop(false);
         appWindow.setIgnoreCursorEvents(false);
 
@@ -42,6 +34,8 @@ const appStates: IState[] = [
     on: {
       enter: async () => {
         const { displayPosition } = useSettingsStore.getState();
+        const monitors = await availableMonitors();
+        const monitorSize = monitors[0].size;
 
         await appWindow.setPosition(
           new LogicalPosition(displayPosition.x, displayPosition.y)
@@ -55,14 +49,69 @@ const appStates: IState[] = [
         useAppStore.setState({
           appScanningState: AppScanningState.SCANNING
         });
-        // appWindow.hide();
-        invoke('open_poe_window').then((response) => {
-          console.log(response);
-        });
+
+        // invoke('open_poe_window').then((response) => {
+        //   console.log(response);
+        // });
+
+        if (useSettingsStore.getState().showLayout) {
+          const layoutmapWindow = new WebviewWindow('layoutmap', {
+            url: 'index.html/#/layoutmap',
+            alwaysOnTop: true,
+            resizable: false,
+            transparent: true,
+            decorations: false
+          });
+
+          layoutmapWindow.once('tauri://created', () => {
+            layoutmapWindow.setSize(new LogicalSize(424 / 3, 230 / 3));
+            layoutmapWindow.setPosition(
+              new LogicalPosition(
+                0,
+                monitorSize.height / 2 - monitorSize.height / 5
+              )
+            );
+          });
+
+          layoutmapWindow.once('tauri://error', function (e) {
+            console.log('error creating layoutmap window', e);
+          });
+        }
+
+        // const isCreatedLayoutWindow = await invoke('open_layout_window');
+
+        // if (isCreatedLayoutWindow) {
+        //   const layoutWindow = WebviewWindow.getByLabel('layout-map');
+
+        //   layoutWindow?.setSize(new LogicalSize(424 / 3, 230 / 3));
+        //   layoutWindow?.setPosition(
+        //     new LogicalPosition(0, monitorSize.height / 2)
+        //   );
+        // }
       },
       leave: async () => {
         document.body.classList.remove('bg-background/70');
         await appWindow.setSkipTaskbar(false);
+
+        // await invoke('close_layout_window');
+
+        const layoutmapWindow = WebviewWindow.getByLabel('layoutmap');
+
+        if (layoutmapWindow) {
+          layoutmapWindow.close();
+        }
+
+        const monitors = await availableMonitors();
+        const monitorSize = monitors[0].size;
+
+        appWindow.setPosition(
+          new LogicalPosition(
+            monitorSize.width / 2 - 400,
+            monitorSize.height / 2 - 300
+          )
+        );
+
+        await appWindow.setFocus();
       }
     }
   },
@@ -99,6 +148,17 @@ const appStates: IState[] = [
         document.body.classList.remove('border-primary');
         document.body.classList.remove('border-dashed');
         await appWindow.setSkipTaskbar(false);
+        await appWindow.setFocus();
+
+        const monitors = await availableMonitors();
+        const monitorSize = monitors[0].size;
+
+        appWindow.setPosition(
+          new LogicalPosition(
+            monitorSize.width / 2 - 400,
+            monitorSize.height / 2 - 300
+          )
+        );
       }
     }
   }

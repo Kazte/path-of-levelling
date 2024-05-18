@@ -10,6 +10,14 @@ const router = createBrowserRouter([
   {
     path: '/settings',
     element: <SettingsPage />
+  },
+  {
+    path: '/layoutmap',
+    element: <h1>Map Layout</h1>
+  },
+  {
+    path: '*',
+    element: <h1>404 Not Found</h1>
   }
 ]);
 export default router;
