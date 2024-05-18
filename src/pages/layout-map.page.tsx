@@ -1,14 +1,13 @@
 import { LogicalSize, appWindow } from '@tauri-apps/api/window';
 import { useEffect, useState } from 'react';
 
-import { cn } from '@/lib/utils';
 import { fs } from '@tauri-apps/api';
 import { resourceDir } from '@tauri-apps/api/path';
 import { useInterval } from '@/hooks/useInterval';
 
 export default function LayoutMapPage() {
   const [currentArea, setCurrentArea] = useState<string>('');
-  const [maxLayoutsPerRow, setMaxLayoutsPerRow] = useState<number>(3);
+  const [maxLayoutsPerRow, _] = useState<number>(3);
   // const [areaImages, setAreaImages] = useState<
   //   {
   //     path: string;
@@ -106,7 +105,9 @@ export default function LayoutMapPage() {
       style={{
         display: 'grid',
         gridTemplateColumns: `repeat(${
-          areaImages?.length < 3 ? areaImages?.length : maxLayoutsPerRow
+          areaImages && areaImages?.length < 3
+            ? areaImages?.length
+            : maxLayoutsPerRow
         }, 1fr)`
       }}
     >
