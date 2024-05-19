@@ -50,9 +50,9 @@ const appStates: IState[] = [
           appScanningState: AppScanningState.SCANNING
         });
 
-        // invoke('open_poe_window').then((response) => {
-        //   console.log(response);
-        // });
+        invoke('open_poe_window').then((response) => {
+          console.log(response);
+        });
 
         if (useSettingsStore.getState().showLayout) {
           const layoutmapWindow = new WebviewWindow('layoutmap', {
