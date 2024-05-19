@@ -41,14 +41,17 @@ import { Input } from './ui/input';
 import { appWindow } from '@tauri-apps/api/window';
 import { cn } from '@/lib/utils';
 import { getVersion } from '@tauri-apps/api/app';
+import { installUpdate } from '@tauri-apps/api/updater';
 import logo from '@/assets/icon.ico';
 import { readText } from '@tauri-apps/api/clipboard';
+import { relaunch } from '@tauri-apps/api/process';
 import { useGuideStore } from '@/store/guide.store';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from './ui/use-toast';
 
 export default function Navbar() {
   const navigator = useNavigate();
-  const { setAppState } = useAppStore((state) => state);
+  const { setAppState, newUpdateAvailable } = useAppStore((state) => state);
   const { guide, setCurrentStep } = useGuideStore((state) => state);
 
   const [openClearDialog, setOpenClearDialog] = useState(false);
@@ -57,6 +60,17 @@ export default function Navbar() {
   const [appVersion, setAppVersion] = useState<string | null>();
 
   const [gotoStep, setGotoStep] = useState(0);
+
+  const { toast } = useToast();
+
+  const startInstall = () => {
+    toast({
+      title: 'Installing update...',
+      description:
+        'Please wait...\nThis program will restart automatically after the update is installed.'
+    });
+    installUpdate().then(relaunch);
+  };
 
   useEffect(() => {
     getVersion().then((version) => {
@@ -296,6 +310,19 @@ export default function Navbar() {
           >
             Version {appVersion}
           </span>
+          {newUpdateAvailable && (
+            <Button
+              variant='secondary'
+              onClick={startInstall}
+              className={cn(
+                'h-6',
+                'bg-green-700 text-foreground hover:bg-opacity-70 hover:bg-green-700'
+              )}
+              disabled={guide === null}
+            >
+              Install Update
+            </Button>
+          )}
         </div>
         <div className='flex flex-row gap-2 justify-center items-center'>
           <Button
