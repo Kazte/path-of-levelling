@@ -1,4 +1,4 @@
-![alt text](/.github/images/banner.png)
+![alt text](/.github/images/banner.webp)
 
 [![Publish Release](https://github.com/Kazte/path-of-levelling/actions/workflows/main.yml/badge.svg)](https://github.com/Kazte/path-of-levelling/actions/workflows/main.yml)
 
@@ -29,16 +29,16 @@ This a aplication to help leveling in Path of Exile game. You can create and upl
 2. Select Client.txt file in Path of Exile folder. Default: `C:\Program Files (x86)\Grinding Gear Games\Path of Exile\logs\Client.txt`.
 3. Set the place for InGame Steps window.
 
-![Guide_02](/.github/images/image-03.png)
+![Guide_02](/.github/images/image-03.webp)
 
 4. Import your build from **[Exile Leveling](https://heartofphos.github.io/exile-leveling/)** page.
-   ![Guide_01](/.github/images/image.png)
+   ![Guide_01](/.github/images/image.webp)
 
-   ![Guide_02](/.github/images/image-1.png)
+   ![Guide_02](/.github/images/image-1.webp)
 
 5. Go to the menu and click _Load from Clipboard_.
 
-![Guide_03](/.github/images/image-2.png)
+![Guide_03](/.github/images/image-2.webp)
 
 7. Click Start.
 8. Done.
@@ -52,7 +52,7 @@ This a aplication to help leveling in Path of Exile game. You can create and upl
 ## Screenshots
 
 In Game View:
-![In game View](/.github/images/image-04.png)
+![In game View](/.github/images/image-04.webp)
 
 ## Contributors
 
