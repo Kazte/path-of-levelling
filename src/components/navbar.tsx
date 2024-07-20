@@ -318,7 +318,6 @@ export default function Navbar() {
                 'h-6',
                 'bg-green-700 text-foreground hover:bg-opacity-70 hover:bg-green-700'
               )}
-              disabled={guide === null}
             >
               Install Update
             </Button>
