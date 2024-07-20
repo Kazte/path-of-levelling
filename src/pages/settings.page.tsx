@@ -37,6 +37,7 @@ export default function SettingsPage() {
   };
 
   const handleOnTest = () => {
+    navigator('/');
     setAppState(AppState.TEST);
   };
 

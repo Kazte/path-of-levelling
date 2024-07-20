@@ -9,7 +9,6 @@ import {
 
 import { IState } from '@/hooks/useMachine';
 import { invoke } from '@tauri-apps/api';
-import router from '@/utilities/router';
 import { useSettingsStore } from '@/store/settings.store';
 
 const appStates: IState[] = [
@@ -119,10 +118,6 @@ const appStates: IState[] = [
     name: 'test',
     on: {
       enter: async () => {
-        router.navigate('/');
-
-        console.log('test');
-
         const { displayPosition } = useSettingsStore.getState();
 
         await appWindow.setPosition(
