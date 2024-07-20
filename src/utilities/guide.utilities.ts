@@ -1,13 +1,14 @@
-import { areas } from '@/data/level-tracker-areas';
+import { IGuide, IStep, ISubstep } from '@/interfaces/guide.interface';
 import {
   IGuideImport,
   IStepImport
 } from '../interfaces/guide-import.interface';
+
 import Ajv from 'ajv';
+import { areas } from '@/data/level-tracker-areas';
 import { guideSchema } from './guide.schema';
-import { useGuideStore } from '@/store/guide.store';
-import { IGuide, IStep, ISubstep } from '@/interfaces/guide.interface';
 import { quests } from '@/data/level-tracker-quests';
+import { useGuideStore } from '@/store/guide.store';
 
 const avj = new Ajv();
 
@@ -103,6 +104,12 @@ export function sanitizeGuide(rawGuide: IGuideImport): IGuide {
           case 'waypoint':
             sanitizedSubstepDescription += 'waypoint';
             break;
+          case 'generic':
+            sanitizedSubstepDescription += part.value;
+            break;
+          case 'dir':
+            sanitizedSubstepDescription += dirIndex[part.dirIndex];
+            break;
           default:
             sanitizedSubstepDescription +=
               part.value || 'PART NOT FOUND: ' + part.type;
@@ -117,7 +124,7 @@ export function sanitizeGuide(rawGuide: IGuideImport): IGuide {
       description: sanitizedSubstepDescription
     });
 
-    console.log('Sanitized Substeps: ', sanitizedSubsteps);
+    // console.log('Sanitized Substeps: ', sanitizedSubsteps);
 
     if (isEnterStep) {
       sanitizedStep.push({
@@ -131,7 +138,7 @@ export function sanitizeGuide(rawGuide: IGuideImport): IGuide {
 
   guide = sanitizedStep;
 
-  console.log('Sanitized Guide: ', guide);
+  // console.log('Sanitized Guide: ', guide);
 
   return guide;
 }
@@ -159,3 +166,5 @@ export function clearGuide() {
   useGuideStore.setState({ guide: null, currentStep: 0 });
   // removeLocalStorage('guide');
 }
+
+const dirIndex: string[] = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W'];
