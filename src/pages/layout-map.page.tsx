@@ -1,21 +1,14 @@
 import { LogicalSize, appWindow } from '@tauri-apps/api/window';
 import { useEffect, useState } from 'react';
 
-import { fs } from '@tauri-apps/api';
-import { resourceDir } from '@tauri-apps/api/path';
+import { getImagesWithPattern } from '@/utilities/tauri.utilities';
 import { useInterval } from '@/hooks/useInterval';
 
 export default function LayoutMapPage() {
   const [currentArea, setCurrentArea] = useState<string>('');
   const [maxLayoutsPerRow, _] = useState<number>(3);
-  // const [areaImages, setAreaImages] = useState<
-  //   {
-  //     path: string;
-  //     name: string;
-  //   }[]
-  // >([]);
 
-  const [areaImages, setAreaImages] = useState<Uint8Array[] | undefined>();
+  const [areaImages, setAreaImages] = useState<string[] | undefined>(undefined);
 
   useInterval(async () => {
     const guide = JSON.parse(localStorage.getItem('guide') || '{}');
@@ -32,29 +25,9 @@ export default function LayoutMapPage() {
     const handleAreaImage = async () => {
       if (currentArea === '') return;
 
-      const dir = await resourceDir();
+      const images = await getImagesWithPattern(currentArea);
 
-      const areaDir = await fs.readDir(`${dir}\\resources\\zones`);
-
-      const images = areaDir.filter((area) => {
-        const areaId = area.name?.split(' ')[0];
-        return areaId === currentArea;
-        // area.name?.startsWith(currentArea)
-      });
-
-      // const imagesClean = images.map(async (image) => ({
-      //   path: await dirname(image.path),
-      //   name: image.name
-      // }));
-
-      const contents = images.map(async (image) => {
-        const content = await fs.readBinaryFile(image.path);
-        return { content };
-      });
-
-      const imagesContent = await Promise.all(contents);
-
-      if (imagesContent.length === 0) {
+      if (images.length === 0) {
         setAreaImages(undefined);
         appWindow.hide();
         return;
@@ -62,27 +35,18 @@ export default function LayoutMapPage() {
 
       appWindow.show();
 
-      console.log(imagesContent.map((image) => image.content));
+      setAreaImages(images);
 
-      setAreaImages(imagesContent.map((image) => image.content));
-
-      const rows = Math.ceil(imagesContent.length / maxLayoutsPerRow);
+      const rows = Math.ceil(images.length / maxLayoutsPerRow);
 
       const width =
-        imagesContent.length < 3
-          ? (424 / 3) * imagesContent.length
+        images.length < 3
+          ? (424 / 3) * images.length
           : (424 / 3) * maxLayoutsPerRow;
       const height = (230 / 3) * rows;
 
-      console.log(images.length);
-
-      console.log(images?.length);
-
-      console.log(images?.length < 3 ? images?.length : maxLayoutsPerRow);
-      console.log(width);
-
       appWindow.setSize(
-        new LogicalSize(imagesContent.length > 0 ? width : 424 / 3, height)
+        new LogicalSize(images.length > 0 ? width : 424 / 3, height)
       );
     };
 
@@ -112,11 +76,7 @@ export default function LayoutMapPage() {
       }}
     >
       {areaImages?.map((image, index) => (
-        <img
-          className='opacity-70'
-          key={index}
-          src={URL.createObjectURL(new Blob([image]))}
-        />
+        <img className='opacity-70' key={index} src={image} />
       ))}
     </div>
   );
