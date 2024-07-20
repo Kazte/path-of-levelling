@@ -22,7 +22,7 @@
         "exists": true,
         "readFile": true,
         "readDir": true,
-        "scope": ["**/*", "$RESOURCE/*", "**"]
+        "scope": ["**/*", "$RESOURCE/**", "$RESOURCE/*", "**"]
       },
       "app": {
         "all": true
@@ -64,7 +64,7 @@
       },
       "protocol": {
         "asset": true,
-        "assetScope": ["**"]
+        "assetScope": ["**", "$RESOURCE/**", "$RESOURCE/*"]
       }
     },
     "bundle": {
@@ -75,7 +75,7 @@
       "resources": ["resources/*"]
     },
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; img-src 'self' asset: https://asset.localhost"
     },
     "systemTray": {
       "iconPath": "icons/icon.ico",
