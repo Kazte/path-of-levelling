@@ -3,23 +3,20 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogTitle,
   AlertDialogTrigger
 } from './ui/alert-dialog';
 import { AppState, useAppStore } from '@/store/app.store';
 import {
-  BoxSelect,
+  Bug,
   Clipboard,
   Info,
   Minus,
   PencilRuler,
   Play,
   Settings,
-  StepForward,
   Trash,
-  Wrench,
   X
 } from 'lucide-react';
 import {
@@ -28,21 +25,18 @@ import {
   MenubarItem,
   MenubarMenu,
   MenubarSeparator,
-  MenubarSub,
-  MenubarSubContent,
-  MenubarSubTrigger,
   MenubarTrigger
 } from './ui/menubar';
 import { clearGuide, setNewGuide } from '@/utilities/guide.utilities';
 import { useEffect, useState } from 'react';
 
 import { Button } from './ui/button';
-import { Input } from './ui/input';
 import { appWindow } from '@tauri-apps/api/window';
 import { cn } from '@/lib/utils';
 import { getVersion } from '@tauri-apps/api/app';
 import { installUpdate } from '@tauri-apps/api/updater';
 import logo from '@/assets/icon.ico';
+import { open } from '@tauri-apps/api/shell';
 import { readText } from '@tauri-apps/api/clipboard';
 import { relaunch } from '@tauri-apps/api/process';
 import { useGuideStore } from '@/store/guide.store';
@@ -52,14 +46,11 @@ import { useToast } from './ui/use-toast';
 export default function Navbar() {
   const navigator = useNavigate();
   const { setAppState, newUpdateAvailable } = useAppStore((state) => state);
-  const { guide, setCurrentStep } = useGuideStore((state) => state);
+  const { guide } = useGuideStore((state) => state);
 
   const [openClearDialog, setOpenClearDialog] = useState(false);
   const [openOverrideDialog, setOpenOverrideDialog] = useState(false);
-  const [openGotoStepDialog, setOpenGotoStepDialog] = useState(false);
   const [appVersion, setAppVersion] = useState<string | null>();
-
-  const [gotoStep, setGotoStep] = useState(0);
 
   const { toast } = useToast();
 
@@ -112,23 +103,6 @@ export default function Navbar() {
     setNewGuide(clipboardText);
   };
 
-  // const handleOnChangeScanning = () => {
-  //   setAppScanningState(
-  //     appScanningState === AppScanningState.NOT_SCANNING
-  //       ? AppScanningState.SCANNING
-  //       : AppScanningState.NOT_SCANNING
-  //   );
-  // };
-
-  const handleGotoStep = () => {
-    setCurrentStep(gotoStep - 1);
-    setOpenGotoStepDialog(false);
-  };
-
-  const handleOnTest = () => {
-    setAppState(AppState.TEST);
-  };
-
   const handleOnStart = () => {
     setAppState(AppState.IN_GAME);
   };
@@ -168,31 +142,6 @@ export default function Navbar() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <AlertDialog
-        open={openGotoStepDialog}
-        onOpenChange={setOpenGotoStepDialog}
-      >
-        <AlertDialogTrigger />
-        <AlertDialogContent>
-          <AlertDialogTitle>Select the step you want to go to</AlertDialogTitle>
-          <AlertDialogDescription>
-            <Input
-              type='number'
-              placeholder='Step'
-              onChange={(e) => {
-                setGotoStep(parseInt(e.target.value));
-              }}
-            />
-          </AlertDialogDescription>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={handleGotoStep}>
-              Go to Step
-            </AlertDialogAction>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
       <Menubar
         className='rounded-none border-0 border-b-[2px] px-2 lg:px-4 justify-between h-[35px]'
         data-tauri-drag-region
@@ -223,58 +172,14 @@ export default function Navbar() {
               <MenubarItem onClick={handleOnCopyFromClipboard}>
                 <Clipboard size={16} className='mr-2' /> Load from Clipboard
               </MenubarItem>
-              <MenubarSub>
-                <MenubarSubTrigger>
-                  <Wrench size={16} className='mr-2' />
-                  Utilities
-                </MenubarSubTrigger>
-                <MenubarSubContent>
-                  <MenubarItem
-                    onClick={() => setOpenGotoStepDialog(true)}
-                    disabled={guide === null}
-                  >
-                    <StepForward size={20} className='mr-2' />
-                    Goto
-                  </MenubarItem>
-                  <MenubarSeparator />
-                  <MenubarItem
-                    onClick={handleOnTest}
-                    // className={cn('w-fit h-fit py-[2px] px-[4px]')}
-                  >
-                    <BoxSelect size={20} className='mr-2' /> Set Display
-                  </MenubarItem>
-                  {/* <MenubarItem
-                    onClick={handleOnChangeScanning}
-                    // className={cn(
-                    //   'w-fit h-fit py-[2px] px-[4px]',
-                    //   appScanningState === AppScanningState.NOT_SCANNING &&
-                    //     'bg-red-700 text-foreground hover:bg-opacity-70 hover:bg-red-700',
-                    //   appScanningState === AppScanningState.SCANNING &&
-                    //     'bg-green-700 text-foreground hover:bg-opacity-70 hover:bg-green-700'
-                    // )}
-                  >
-                    {appScanningState === AppScanningState.NOT_SCANNING ? (
-                      <>
-                        <EyeOff size={20} className='mr-2' /> Not Scanning
-                      </>
-                    ) : (
-                      <>
-                        <Eye size={20} className='mr-2' /> Scanning
-                      </>
-                    )}
-                  </MenubarItem> */}
-                </MenubarSubContent>
-              </MenubarSub>
               <MenubarSeparator />
               <MenubarItem
-                // onClick={handleOnClearGuide}
                 onClick={() => setOpenClearDialog(true)}
                 disabled={guide === null}
                 className='data-[highlighted]:bg-destructive'
               >
                 <Trash size={16} className='mr-2' /> Clear Guide
               </MenubarItem>
-              <MenubarSeparator />
               <MenubarItem asChild>
                 <a
                   href='https://heartofphos.github.io/exile-leveling/'
@@ -294,7 +199,16 @@ export default function Navbar() {
                 <Settings size={16} className='mr-2' />
                 Settings
               </MenubarItem>
-              <MenubarSeparator />
+              <MenubarItem
+                onClick={async () => {
+                  await open(
+                    'https://github.com/kazte/path-of-levelling/issues/new?title=[BUG]%20&labels=bug&body=**Describe%20the%20bug**%0A%0A**To%20Reproduce**%0A1.%20Step%201%0A2.%20Step%202%0A%0A**Expected%20behavior**%0A%0A**Screenshots**%0A%0A**Additional%20context**%0A'
+                  );
+                }}
+              >
+                <Bug size={16} className='mr-2' />
+                Report Bug
+              </MenubarItem>
               <MenubarItem
                 onClick={handleOnClose}
                 className='data-[highlighted]:bg-destructive'
