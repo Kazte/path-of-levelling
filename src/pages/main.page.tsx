@@ -7,7 +7,7 @@ import {
 import { useEffect, useState } from 'react';
 
 import InGameScreen from '@/components/in-game-screen';
-import LevellingGuide from '@/components/levelling-guide';
+import LevellingGuideMain from '@/components/levelling-guide-main';
 import MainScreen from '@/components/main-screen';
 import Navbar from '@/components/navbar';
 import { Switch } from 'ktools-r';
@@ -110,11 +110,16 @@ export default function MainPage() {
   }, [areaName]);
 
   useEffect(() => {
-    if (appState === AppState.NORMAL) {
+    if (appState === AppState.NORMAL && currentStep !== null) {
       // Scroll to current step
       const element = document.getElementById(`step-${currentStep}`);
+
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+        element.scrollIntoView({
+          block: 'center',
+          behavior: 'smooth',
+          inline: 'center'
+        });
       }
     }
   }, [currentStep]);
@@ -132,7 +137,7 @@ export default function MainPage() {
         <main className='flex-grow p-2 overflow-y-auto'>
           <Switch>
             <Switch.Case condition={!!guide}>
-              <LevellingGuide levellingGuide={guide!} />
+              <LevellingGuideMain levellingGuide={guide!} />
             </Switch.Case>
             <Switch.Default>
               <MainScreen />
