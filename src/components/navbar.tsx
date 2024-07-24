@@ -9,6 +9,7 @@ import {
 } from './ui/alert-dialog';
 import { AppState, useAppStore } from '@/store/app.store';
 import {
+  Atom,
   Bug,
   Clipboard,
   Info,
@@ -25,15 +26,21 @@ import {
   MenubarItem,
   MenubarMenu,
   MenubarSeparator,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
   MenubarTrigger
 } from './ui/menubar';
 import { clearGuide, setNewGuide } from '@/utilities/guide.utilities';
 import { useEffect, useState } from 'react';
 
 import { Button } from './ui/button';
+import { IGuide } from '@/interfaces/guide.interface';
 import { appWindow } from '@tauri-apps/api/window';
 import { cn } from '@/lib/utils';
 import { getVersion } from '@tauri-apps/api/app';
+import guideSpeed from './../data/guides/speed-leveling.guide.json';
+import guideStarter from './../data/guides/league-starter.guide.json';
 import { installUpdate } from '@tauri-apps/api/updater';
 import logo from '@/assets/icon.ico';
 import { open } from '@tauri-apps/api/shell';
@@ -51,6 +58,7 @@ export default function Navbar() {
   const [openClearDialog, setOpenClearDialog] = useState(false);
   const [openOverrideDialog, setOpenOverrideDialog] = useState(false);
   const [appVersion, setAppVersion] = useState<string | null>();
+  const [auxGuide, setAuxGuide] = useState<string | undefined>();
 
   const { toast } = useToast();
 
@@ -64,6 +72,11 @@ export default function Navbar() {
   };
 
   useEffect(() => {
+    // check if is dev mode
+    if (process.env.NODE_ENV === 'development') {
+      setAppVersion('dev');
+      return;
+    }
     getVersion().then((version) => {
       setAppVersion(version);
     });
@@ -78,13 +91,13 @@ export default function Navbar() {
   };
 
   const handleOnCopyFromClipboard = async () => {
+    const clipboardText = await readText();
+
+    if (!clipboardText) return;
     if (!guide) {
-      const clipboardText = await readText();
-
-      if (!clipboardText) return;
-
       setNewGuide(clipboardText);
     } else {
+      setAuxGuide(clipboardText);
       setOpenOverrideDialog(true);
     }
   };
@@ -96,15 +109,32 @@ export default function Navbar() {
   const handleOnOverrideGuide = async () => {
     clearGuide();
 
-    const clipboardText = await readText();
-
-    if (!clipboardText) return;
-
-    setNewGuide(clipboardText);
+    if (auxGuide) {
+      setNewGuide(auxGuide);
+      setAuxGuide(undefined);
+    }
   };
 
   const handleOnStart = () => {
     setAppState(AppState.IN_GAME);
+  };
+
+  const handleOnLeagueStarter = () => {
+    if (!guide) {
+      setNewGuide(JSON.stringify(guideStarter));
+    } else {
+      setAuxGuide(JSON.stringify(guideStarter));
+      setOpenOverrideDialog(true);
+    }
+  };
+
+  const handleOnSpeedLeveling = () => {
+    if (!guide) {
+      setNewGuide(JSON.stringify(guideSpeed));
+    } else {
+      setAuxGuide(JSON.stringify(guideSpeed));
+      setOpenOverrideDialog(true);
+    }
   };
 
   return (
@@ -172,7 +202,6 @@ export default function Navbar() {
               <MenubarItem onClick={handleOnCopyFromClipboard}>
                 <Clipboard size={16} className='mr-2' /> Load from Clipboard
               </MenubarItem>
-              <MenubarSeparator />
               <MenubarItem
                 onClick={() => setOpenClearDialog(true)}
                 disabled={guide === null}
@@ -190,6 +219,20 @@ export default function Navbar() {
                   Open Exile Leveling
                 </a>
               </MenubarItem>
+              <MenubarSub>
+                <MenubarSubTrigger>
+                  <Atom size={16} className='mr-2' />
+                  Basic Guides
+                </MenubarSubTrigger>
+                <MenubarSubContent>
+                  <MenubarItem onClick={handleOnLeagueStarter}>
+                    League Starter
+                  </MenubarItem>
+                  <MenubarItem onClick={handleOnSpeedLeveling}>
+                    Speed Leveling
+                  </MenubarItem>
+                </MenubarSubContent>
+              </MenubarSub>
               <MenubarSeparator />
               <MenubarItem
                 onClick={() => {
