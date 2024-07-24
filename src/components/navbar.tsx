@@ -35,7 +35,6 @@ import { clearGuide, setNewGuide } from '@/utilities/guide.utilities';
 import { useEffect, useState } from 'react';
 
 import { Button } from './ui/button';
-import { IGuide } from '@/interfaces/guide.interface';
 import { appWindow } from '@tauri-apps/api/window';
 import { cn } from '@/lib/utils';
 import { getVersion } from '@tauri-apps/api/app';
