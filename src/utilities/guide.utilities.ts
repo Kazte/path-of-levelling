@@ -81,6 +81,8 @@ export function sanitizeGuide(rawGuide: IGuideImport): IGuide {
               // @ts-ignore
               const dstAreaPortal = areas[part.dstAreaId].name;
               sanitizedSubstepDescription += `portal to ${dstAreaPortal}.`;
+              isEnterStep = true;
+              changeAreaId = part.dstAreaId;
               break;
             case 'waypoint_get':
               sanitizedSubstepDescription += `waypoint`;
@@ -97,7 +99,9 @@ export function sanitizeGuide(rawGuide: IGuideImport): IGuide {
               sanitizedSubstepDescription += 'crafting';
               break;
             case 'ascend':
-              sanitizedSubstepDescription += `Complete the ${part.version}_lab`;
+              // @ts-ignore
+              const labName = labNames[part.version];
+              sanitizedSubstepDescription += `Complete the ${labName} Lab.`;
               break;
             case 'waypoint':
               sanitizedSubstepDescription += 'waypoint';
@@ -182,3 +186,10 @@ export function clearGuide() {
 }
 
 const dirIndex: string[] = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W'];
+
+const labNames = {
+  normal: 'Normal',
+  cruel: 'Cruel',
+  merciless: 'Merciless',
+  eternal: 'Eternal'
+};

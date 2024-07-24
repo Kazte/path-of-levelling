@@ -1,5 +1,13 @@
 import { AppState, useAppStore } from '@/store/app.store';
 import { BoxSelect, Check, File } from 'lucide-react';
+import { GrowDirection, useSettingsStore } from '@/store/settings.store';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,7 +16,6 @@ import { Menubar } from '@/components/ui/menubar';
 import { Switch } from '@/components/ui/switch';
 import { open } from '@tauri-apps/api/dialog';
 import { useNavigate } from 'react-router-dom';
-import { useSettingsStore } from '@/store/settings.store';
 import { useState } from 'react';
 
 export default function SettingsPage() {
@@ -39,6 +46,12 @@ export default function SettingsPage() {
   const handleOnTest = () => {
     navigator('/');
     setAppState(AppState.TEST);
+  };
+
+  const handleSetGrowDirection = (value: GrowDirection) => {
+    console.log(value);
+
+    settingStore.setGrowDirection(value);
   };
 
   return (
@@ -73,12 +86,29 @@ export default function SettingsPage() {
               </Button>
             </div>
           </div>
-          <div className='flex flex-col gap-1'>
-            <Label>Display Postiion</Label>
-            <div className='flex w-full max-w-sm items-center space-x-2'>
-              <Button type='button' onClick={handleOnTest}>
-                <BoxSelect /> Set Position
-              </Button>
+          <div className='flex flex-row gap-4'>
+            <div className='flex flex-col gap-1'>
+              <Label>Display Position</Label>
+              <div className='flex w-full max-w-sm items-center space-x-2'>
+                <Button type='button' onClick={handleOnTest}>
+                  <BoxSelect /> Set Position
+                </Button>
+              </div>
+            </div>
+            <div className='flex flex-col gap-1'>
+              <Label>Grow Direction</Label>
+              <Select
+                onValueChange={handleSetGrowDirection}
+                value={settingStore.growDirection}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder='Select Grow Direction' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='up'>Up</SelectItem>
+                  <SelectItem value='down'>Down</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <div className='flex flex-col gap-1'>

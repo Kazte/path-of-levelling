@@ -1,11 +1,17 @@
 import { AppScanningState, AppState, useAppStore } from '@/store/app.store';
 import {
+  LogicalPosition,
+  LogicalSize,
+  appWindow
+} from '@tauri-apps/api/window';
+import {
   isRegistered,
   register,
   unregister
 } from '@tauri-apps/api/globalShortcut';
 import { useEffect, useState } from 'react';
 
+import { IN_GAME_WINDOW_SIZE } from '@/utilities/constants';
 import InGameScreen from '@/components/in-game-screen';
 import LevellingGuideMain from '@/components/levelling-guide-main';
 import MainScreen from '@/components/main-screen';
@@ -31,7 +37,9 @@ export default function MainPage() {
   } = useGuideStore((state) => state);
   const { setAppState, appScanningState } = useAppStore((state) => state);
   const appState = useAppStore((state) => state.appState);
-  const { clientTxtPath } = useSettingsStore((state) => state);
+  const { clientTxtPath, displayPosition, growDirection } = useSettingsStore(
+    (state) => state
+  );
 
   const CLIENT_PATH = clientTxtPath;
 
@@ -87,6 +95,32 @@ export default function MainPage() {
         setSubtractCurrentStep();
       });
     }
+
+    ir = await isRegistered('CmdOrCtrl+Shift+Alt+ArrowUp');
+    console.log('CmdOrCtrl+Shift+Alt+ArrowUp', ir);
+    if (!ir) {
+      await register('CmdOrCtrl+Shift+Alt+ArrowUp', () => {
+        if (appState === AppState.IN_GAME) {
+          window.scrollBy({
+            top: -10,
+            behavior: 'smooth'
+          });
+        }
+      });
+    }
+
+    ir = await isRegistered('CmdOrCtrl+Shift+Alt+ArrowDown');
+    console.log('CmdOrCtrl+Shift+Alt+ArrowDown', ir);
+    if (!ir) {
+      await register('CmdOrCtrl+Shift+Alt+ArrowDown', () => {
+        if (appState === AppState.IN_GAME) {
+          window.scrollBy({
+            top: 10,
+            behavior: 'smooth'
+          });
+        }
+      });
+    }
   };
   //#endregion
 
@@ -122,6 +156,50 @@ export default function MainPage() {
         });
       }
     }
+
+    const adjustWindow = async () => {
+      if (appState === AppState.IN_GAME) {
+        // adjust window size to fit the whole text height of the current step
+        const element = document.getElementById(`step-${currentStep}`);
+
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          const height = rect.top + rect.height + 30;
+          const currentPosition = displayPosition;
+          const gw = growDirection;
+          if (height >= IN_GAME_WINDOW_SIZE.height) {
+            await appWindow.setSize(new LogicalSize(480, height));
+
+            // move position to always have the bottom in the same place
+
+            if (gw === 'up') {
+              await appWindow.setPosition(
+                new LogicalPosition(
+                  currentPosition.x,
+                  currentPosition.y - (height - IN_GAME_WINDOW_SIZE.height)
+                )
+              );
+            } else if (gw === 'down') {
+              await appWindow.setPosition(
+                new LogicalPosition(currentPosition.x, currentPosition.y)
+              );
+            }
+          } else {
+            await appWindow.setSize(
+              new LogicalSize(
+                IN_GAME_WINDOW_SIZE.width,
+                IN_GAME_WINDOW_SIZE.height
+              )
+            );
+            await appWindow.setPosition(
+              new LogicalPosition(currentPosition.x, currentPosition.y)
+            );
+          }
+        }
+      }
+    };
+
+    adjustWindow();
   }, [currentStep]);
 
   return (
