@@ -203,7 +203,7 @@ export default function MainPage() {
     adjustWindow();
   }, [currentStep]);
 
-  const [clientTxtPathValue, setClientTxtPathValue] = useState(clientTxtPath);
+  const [_clientTxtPathValue, setClientTxtPathValue] = useState(clientTxtPath);
 
   const handleSetClientTxt = async () => {
     const selection = await open({
