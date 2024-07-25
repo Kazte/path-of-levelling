@@ -14,14 +14,13 @@
 
 ## Introduction
 
-This a aplication to help leveling in Path of Exile game. You can create and upload builds from **[Exile Leveling](https://heartofphos.github.io/exile-leveling/)** page. Also you can see the steps inside the game. It will be automatically updated (when change the zone).
+Path of Levelling is an aplication to help leveling in Path of Exile game. You can create and upload builds from **[Exile Leveling](https://heartofphos.github.io/exile-leveling/)** page. Also you can see the steps inside the game. It will be automatically updated (when change the zone).
 
 ## Features
 
 - In game steps.
 - Automatic update.
 - Save your current progress.
-- And more...
 
 ## Installation
 
