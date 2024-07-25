@@ -26,8 +26,7 @@ export const useSettingsStore = create<States & Actions>()(
   persist(
     (set) => {
       return {
-        clientTxtPath:
-          'C:\\Program Files (x86)\\Grinding Gear Games\\Path of Exile\\logs\\Client.txt',
+        clientTxtPath: '',
         displayPosition: { x: 100, y: 100 },
         showLayout: true,
         growDirection: 'up',

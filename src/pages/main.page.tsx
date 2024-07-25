@@ -11,6 +11,7 @@ import {
 } from '@tauri-apps/api/globalShortcut';
 import { useEffect, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
 import { IN_GAME_WINDOW_SIZE } from '@/utilities/constants';
 import InGameScreen from '@/components/in-game-screen';
 import LevellingGuideMain from '@/components/levelling-guide-main';
@@ -20,6 +21,7 @@ import { Switch } from 'ktools-r';
 import TestScreen from '@/components/test-screen';
 import { invoke } from '@tauri-apps/api';
 import { listen } from '@tauri-apps/api/event';
+import { open } from '@tauri-apps/api/dialog';
 import { useGuideStore } from '@/store/guide.store';
 import { useInterval } from '@/hooks/useInterval';
 import { useSettingsStore } from '@/store/settings.store';
@@ -37,9 +39,8 @@ export default function MainPage() {
   } = useGuideStore((state) => state);
   const { setAppState, appScanningState } = useAppStore((state) => state);
   const appState = useAppStore((state) => state.appState);
-  const { clientTxtPath, displayPosition, growDirection } = useSettingsStore(
-    (state) => state
-  );
+  const { clientTxtPath, setClientTxtPath, displayPosition, growDirection } =
+    useSettingsStore((state) => state);
 
   const CLIENT_PATH = clientTxtPath;
 
@@ -202,8 +203,38 @@ export default function MainPage() {
     adjustWindow();
   }, [currentStep]);
 
+  const [clientTxtPathValue, setClientTxtPathValue] = useState(clientTxtPath);
+
+  const handleSetClientTxt = async () => {
+    const selection = await open({
+      multiple: false,
+      filters: [{ name: 'Text', extensions: ['txt'] }]
+    });
+
+    if (selection) {
+      setClientTxtPath(selection as string);
+      setClientTxtPathValue(selection as string);
+    }
+  };
+
   return (
     <Switch>
+      <Switch.Case condition={clientTxtPath === ''}>
+        <Navbar />
+
+        <div className='flex-grow p-2 text-center flex flex-col justify-center items-center h-full gap-8'>
+          <h2 className='justify-self-stretch underline'>No client.txt path</h2>
+          <h3>Set client.txt path before starting</h3>
+          <div className='flex flex-col'>
+            <em>Usually located in </em>
+            <em>
+              C:/Program Files (x86)/Grinding Gear Games/Path of
+              Exile/logs/Client.txt
+            </em>
+          </div>
+          <Button onClick={handleSetClientTxt}>Set Client Path</Button>
+        </div>
+      </Switch.Case>
       <Switch.Case condition={appState === AppState.TEST}>
         <TestScreen />
       </Switch.Case>
